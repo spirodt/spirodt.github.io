@@ -1,0 +1,32 @@
+@inherits LocalizedComponent
+
+<section class="section" id="projects">
+    <div class="container">
+        <header class="section-head">
+            <p class="eyebrow">@T("Проекти", "Projects")</p>
+            <h2>@T(SiteContent.ProjectsTitle)</h2>
+        </header>
+        <div class="project-grid">
+            @foreach (var p in SiteContent.Projects)
+            {
+                <article class="project">
+                    <p class="project-kind">@T(p.Kind)</p>
+                    <h3>@T(p.Name)</h3>
+                    <p>@T(p.Text)</p>
+                    <ul class="highlights">
+                        @foreach (var h in p.Highlights)
+                        {
+                            <li>@T(h)</li>
+                        }
+                    </ul>
+                    <ul class="chips small">
+                        @foreach (var tech in p.Tech)
+                        {
+                            <li>@tech</li>
+                        }
+                    </ul>
+                </article>
+            }
+        </div>
+    </div>
+</section>

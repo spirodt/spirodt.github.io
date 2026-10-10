@@ -1,0 +1,36 @@
+@inherits LocalizedComponent
+@inject IJSRuntime JS
+
+<section class="section" id="services">
+    <div class="container">
+        <header class="section-head">
+            <p class="eyebrow">@T("Услуги", "Services")</p>
+            <h2>@T(SiteContent.ServicesTitle)</h2>
+            <p class="lead">@T(SiteContent.ServicesLead)</p>
+        </header>
+        <div class="card-grid services">
+            @foreach (var s in SiteContent.Services)
+            {
+                <article class="card">
+                    <div class="card-icon"><Icon Name="@s.Icon" /></div>
+                    <h3>@T(s.Title)</h3>
+                    <p>@T(s.Text)</p>
+                    <ul class="ticks">
+                        @foreach (var point in s.Points)
+                        {
+                            <li><Icon Name="check" Size="16" /> @T(point)</li>
+                        }
+                    </ul>
+                </article>
+            }
+            <article class="card card-cta">
+                <h3>@T("Не сте сигурни што ви треба?", "Not sure what you need?")</h3>
+                <p>@T("Опишете го проблемот со свои зборови — јас ќе предложам решение и цена, без обврска.",
+                      "Describe the problem in your own words — I'll suggest a solution and a price, no obligation.")</p>
+                <button type="button" class="btn btn-light" @onclick='() => JS.InvokeVoidAsync("portfolio.scrollToSection", "contact")'>
+                    @T("Прашај бесплатно", "Ask for free") <Icon Name="arrow" Size="18" />
+                </button>
+            </article>
+        </div>
+    </div>
+</section>

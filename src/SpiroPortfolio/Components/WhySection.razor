@@ -1,0 +1,20 @@
+@inherits LocalizedComponent
+
+<section class="section section-navy" id="why">
+    <div class="container">
+        <header class="section-head">
+            <p class="eyebrow">@T("Предности", "Why me")</p>
+            <h2>@T(SiteContent.WhyTitle)</h2>
+        </header>
+        <div class="why-grid">
+            @foreach (var r in SiteContent.Reasons)
+            {
+                <article class="why">
+                    <span class="why-icon"><Icon Name="@r.Icon" /></span>
+                    <h3>@T(r.Title)</h3>
+                    <p>@T(r.Text)</p>
+                </article>
+            }
+        </div>
+    </div>
+</section>

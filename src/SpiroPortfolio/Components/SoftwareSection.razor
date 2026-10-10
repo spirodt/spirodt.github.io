@@ -1,0 +1,30 @@
+@inherits LocalizedComponent
+@inject IJSRuntime JS
+
+<section class="section section-tint" id="software">
+    <div class="container">
+        <header class="section-head">
+            <p class="eyebrow">@T("Софтвер", "Software")</p>
+            <h2>@T(SiteContent.SoftwareTitle)</h2>
+            <p class="lead">@T(SiteContent.SoftwareLead)</p>
+        </header>
+        <div class="product-grid">
+            @foreach (var p in SiteContent.Products)
+            {
+                <article class="product">
+                    <div class="product-top">
+                        <span class="card-icon small"><Icon Name="@p.Icon" Size="20" /></span>
+                        <span class="tag">@T(p.Tag)</span>
+                    </div>
+                    <h3>@T(p.Name)</h3>
+                    <p>@T(p.Text)</p>
+                </article>
+            }
+        </div>
+        <div class="center">
+            <button type="button" class="btn btn-ghost" @onclick='() => JS.InvokeVoidAsync("portfolio.scrollToSection", "contact")'>
+                @T("Закажи бесплатно демо", "Book a free demo") <Icon Name="arrow" Size="18" />
+            </button>
+        </div>
+    </div>
+</section>
