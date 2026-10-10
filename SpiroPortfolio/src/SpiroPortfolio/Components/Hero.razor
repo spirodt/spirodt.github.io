@@ -1,0 +1,63 @@
+@inherits LocalizedComponent
+@inject IJSRuntime JS
+
+<section class="hero">
+    <div class="hero-bg" aria-hidden="true"></div>
+    <div class="container hero-grid">
+        <div class="hero-copy">
+            <p class="pill"><span class="pulse"></span>@T("Достапен за нови клиенти", "Available for new clients")</p>
+            <h1>@T(SiteContent.HeroTitle)</h1>
+            <p class="lead">@T(SiteContent.HeroLead)</p>
+            <div class="hero-cta">
+                <button type="button" class="btn btn-primary btn-lg" @onclick='() => JS.InvokeVoidAsync("portfolio.scrollToSection", "contact")'>
+                    @T(SiteContent.CtaPrimary) <Icon Name="arrow" Size="18" />
+                </button>
+                <button type="button" class="btn btn-ghost btn-lg" @onclick='() => JS.InvokeVoidAsync("portfolio.scrollToSection", "pricing")'>
+                    @T(SiteContent.CtaSecondary)
+                </button>
+            </div>
+            <ul class="hero-trust">
+                <li><Icon Name="check" Size="16" /> @T("Бесплатна процена", "Free assessment")</li>
+                <li><Icon Name="check" Size="16" /> @T("Цена пред работа", "Price up front")</li>
+                <li><Icon Name="check" Size="16" /> @T("Излез на адреса", "On-site visits")</li>
+            </ul>
+        </div>
+
+        <aside class="hero-card">
+            <div class="hero-card-head">
+                <span class="hero-card-label">@T("Брз контакт", "Quick contact")</span>
+                <span class="hero-card-area"><Icon Name="pin" Size="14" /> @T(SiteContent.Contact.Area)</span>
+            </div>
+            <a class="hero-phone" href="@SiteContent.Contact.PhoneHref">
+                <span class="hero-phone-icon"><Icon Name="phone" Size="22" /></span>
+                <span>
+                    <small>@T("Јавете се директно", "Call me directly")</small>
+                    <strong>@SiteContent.Contact.Phone</strong>
+                </span>
+            </a>
+            <div class="hero-messengers">
+                <a class="btn btn-viber" href="@SiteContent.Contact.ViberHref"><Icon Name="chat" Size="17" /> Viber</a>
+                <a class="btn btn-whatsapp" href="@SiteContent.Contact.WhatsAppHref" target="_blank" rel="noopener"><Icon Name="chat" Size="17" /> WhatsApp</a>
+            </div>
+            <ul class="hero-card-list">
+                @foreach (var s in SiteContent.Services)
+                {
+                    <li><span class="dot"></span>@T(s.Title)</li>
+                }
+            </ul>
+            <p class="hero-card-hours"><Icon Name="clock" Size="14" /> @T(SiteContent.Hours)</p>
+        </aside>
+    </div>
+
+    <div class="container">
+        <div class="stats">
+            @foreach (var stat in SiteContent.Stats)
+            {
+                <div class="stat">
+                    <strong>@T(stat.Value)</strong>
+                    <span>@T(stat.Label)</span>
+                </div>
+            }
+        </div>
+    </div>
+</section>

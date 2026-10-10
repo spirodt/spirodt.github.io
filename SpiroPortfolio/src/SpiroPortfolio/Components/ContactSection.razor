@@ -1,0 +1,131 @@
+@inherits LocalizedComponent
+@inject ContactService Contact
+@inject IJSRuntime JS
+
+<section class="section section-tint" id="contact">
+    <div class="container contact-grid">
+        <div>
+            <p class="eyebrow">@T("Контакт", "Contact")</p>
+            <h2>@T(SiteContent.ContactTitle)</h2>
+            <p class="lead">@T(SiteContent.ContactLead)</p>
+
+            <a class="contact-phone" href="@SiteContent.Contact.PhoneHref">
+                <span class="hero-phone-icon"><Icon Name="phone" Size="22" /></span>
+                <span><small>@T("Најбрзо е по телефон", "Fastest by phone")</small><strong>@SiteContent.Contact.Phone</strong></span>
+            </a>
+            <ul class="contact-list">
+                <li><Icon Name="chat" Size="18" /><a href="@SiteContent.Contact.ViberHref">Viber</a> · <a href="@SiteContent.Contact.WhatsAppHref" target="_blank" rel="noopener">WhatsApp</a></li>
+                @if (SiteContent.Contact.HasEmail)
+                {
+                    <li><Icon Name="mail" Size="18" /><a href="mailto:@SiteContent.Contact.Email">@SiteContent.Contact.Email</a></li>
+                }
+                <li><Icon Name="linkedin" Size="18" /><a href="@SiteContent.Contact.LinkedIn" target="_blank" rel="noopener">linkedin.com/in/spirodt</a></li>
+                <li><Icon Name="pin" Size="18" /><span>@T(SiteContent.Contact.Area)</span></li>
+                <li><Icon Name="clock" Size="18" /><span>@T(SiteContent.Hours)</span></li>
+            </ul>
+        </div>
+
+        <div class="form-card">
+            @if (_state == SendResult.Sent)
+            {
+                <div class="form-done" role="status">
+                    <span class="card-icon"><Icon Name="check" /></span>
+                    <h3>@T("Пораката е испратена", "Message sent")</h3>
+                    <p>@T("Ви благодарам! Ќе ве контактирам наскоро.", "Thank you! I'll get back to you shortly.")</p>
+                    <button type="button" class="btn btn-ghost" @onclick="Reset">@T("Нова порака", "New message")</button>
+                </div>
+            }
+            else
+            {
+                <form @onsubmit="SubmitAsync" novalidate>
+                    <div class="field-row">
+                        <label class="field">
+                            <span>@T("Име и презиме", "Full name") *</span>
+                            <input @bind="_model.Name" autocomplete="name" />
+                            @if (_errors.Contains("name")) { <em class="err">@T("Внесете име.", "Please enter your name.")</em> }
+                        </label>
+                        <label class="field">
+                            <span>@T("Телефон", "Phone")</span>
+                            <input @bind="_model.Phone" type="tel" autocomplete="tel" />
+                        </label>
+                    </div>
+                    <label class="field">
+                        <span>@T("Е-пошта", "Email") <small>(@T("или телефон", "or phone"))</small></span>
+                        <input @bind="_model.Email" type="email" autocomplete="email" />
+                        @if (_errors.Contains("email")) { <em class="err">@T("Внесете валидна е-пошта или телефон.", "Enter a valid email or phone.")</em> }
+                    </label>
+                    <div class="field">
+                        <span>@T("Тема", "Topic")</span>
+                        <div class="topic-chips">
+                            @foreach (var topic in SiteContent.ContactTopics)
+                            {
+                                var label = T(topic);
+                                <button type="button" class="topic @(_model.Topic == label ? "active" : "")"
+                                        aria-pressed="@Aria(_model.Topic == label)" @onclick="() => _model.Topic = label">@label</button>
+                            }
+                        </div>
+                    </div>
+                    <label class="field">
+                        <span>@T("Порака", "Message") *</span>
+                        <textarea @bind="_model.Message" rows="5"
+                                  placeholder="@T("Пр. лаптопот е бавен и се гаси сам…", "E.g. my laptop is slow and shuts down on its own…")"></textarea>
+                        @if (_errors.Contains("message")) { <em class="err">@T("Напишете неколку зборови.", "Please write a few words.")</em> }
+                    </label>
+                    <label class="hp" aria-hidden="true">Website <input @bind="_model.Website" tabindex="-1" autocomplete="off" /></label>
+
+                    @if (_state == SendResult.Failed)
+                    {
+                        <p class="err block">@T("Не успеа испраќањето. Обидете се повторно или јавете се на телефон.", "Sending failed. Please try again or call me.")</p>
+                    }
+
+                    <button type="submit" class="btn btn-primary wide" disabled="@_sending">
+                        @(_sending ? T("Се испраќа…", "Sending…") : T("Испрати барање", "Send request"))
+                        <Icon Name="arrow" Size="18" />
+                    </button>
+                    <p class="fine">@T("Податоците ги користам само за да ви одговорам.", "I only use your details to reply to you.")</p>
+                </form>
+            }
+        </div>
+    </div>
+</section>
+
+@code {
+    private ContactRequest _model = new();
+    private readonly HashSet<string> _errors = [];
+    private SendResult? _state;
+    private bool _sending;
+
+    private async Task SubmitAsync()
+    {
+        _errors.Clear();
+        _state = null;
+        if (string.IsNullOrWhiteSpace(_model.Name)) _errors.Add("name");
+        var hasEmail = _model.Email.Contains('@') && _model.Email.Contains('.');
+        var hasPhone = _model.Phone.Count(char.IsDigit) >= 8;
+        if (!hasEmail && !hasPhone) _errors.Add("email");
+        if (_model.Message.Trim().Length < 5) _errors.Add("message");
+        if (_errors.Count > 0) return;
+
+        if (string.IsNullOrEmpty(_model.Topic)) _model.Topic = T(SiteContent.ContactTopics[^1]);
+
+        _sending = true;
+        var result = await Contact.SendAsync(_model);
+        _sending = false;
+
+        if (result == SendResult.OpenedMailClient)
+        {
+            await JS.InvokeVoidAsync("portfolio.open", ContactService.FallbackLink(_model));
+            _state = SendResult.Sent;
+        }
+        else
+        {
+            _state = result;
+        }
+    }
+
+    private void Reset()
+    {
+        _model = new();
+        _state = null;
+    }
+}

@@ -1,0 +1,52 @@
+@inherits LocalizedComponent
+@inject LanguageService Language
+@inject IJSRuntime JS
+
+<div class="topbar">
+    <div class="container topbar-inner">
+        <span><Icon Name="pin" Size="15" /> @T(SiteContent.Contact.Area)</span>
+        <span class="topbar-hours"><Icon Name="clock" Size="15" /> @T(SiteContent.Hours)</span>
+        <a href="@SiteContent.Contact.PhoneHref" class="topbar-phone"><Icon Name="phone" Size="15" /> @SiteContent.Contact.Phone</a>
+    </div>
+</div>
+
+<header class="nav @(_open ? "is-open" : "")">
+    <div class="container nav-inner">
+        <a class="brand" href="" @onclick="() => Go(null)" @onclick:preventDefault aria-label="@T("Почетна", "Home")">
+            <Logo />
+        </a>
+
+        <nav class="nav-links" aria-label="@T("Главна навигација", "Main navigation")">
+            @foreach (var (id, label) in SiteContent.Nav)
+            {
+                <a href="#@id" @onclick="() => Go(id)" @onclick:preventDefault>@T(label)</a>
+            }
+        </nav>
+
+        <div class="nav-actions">
+            <div class="lang-switch" role="group" aria-label="@T("Јазик", "Language")">
+                <button type="button" class="@(Lang == Lang.Mk ? "active" : "")" aria-pressed="@Aria(Lang == Lang.Mk)"
+                        @onclick="() => Language.SetAsync(Lang.Mk)">МК</button>
+                <button type="button" class="@(Lang == Lang.En ? "active" : "")" aria-pressed="@Aria(Lang == Lang.En)"
+                        @onclick="() => Language.SetAsync(Lang.En)">EN</button>
+            </div>
+            <a class="btn btn-primary btn-sm nav-cta" href="@SiteContent.Contact.PhoneHref">
+                <Icon Name="phone" Size="16" /> @T("Јави се", "Call")
+            </a>
+            <button type="button" class="nav-toggle" aria-expanded="@Aria(_open)"
+                    aria-label="@T("Мени", "Menu")" @onclick="() => _open = !_open">
+                <Icon Name="@(_open ? "close" : "menu")" />
+            </button>
+        </div>
+    </div>
+</header>
+
+@code {
+    private bool _open;
+
+    private async Task Go(string? id)
+    {
+        _open = false;
+        await JS.InvokeVoidAsync("portfolio.scrollToSection", id ?? "top");
+    }
+}
