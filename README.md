@@ -72,5 +72,4 @@ src/SpiroPortfolio/
 ├─ Components/                 ← секции: Hero, About, Services, Software, Experience, Projects, Pricing, Contact
 ├─ Layout/MainLayout.razor
 └─ wwwroot/                    ← index.html (SEO, schema.org), css, js
-
 ```
