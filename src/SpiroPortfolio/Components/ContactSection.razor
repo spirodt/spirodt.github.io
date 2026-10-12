@@ -15,10 +15,15 @@
             </a>
             <ul class="contact-list">
                 <li><Icon Name="chat" Size="18" /><a href="@SiteContent.Contact.ViberHref">Viber</a> · <a href="@SiteContent.Contact.WhatsAppHref" target="_blank" rel="noopener">WhatsApp</a></li>
-                @if (SiteContent.Contact.HasEmail)
-                {
-                    <li><Icon Name="mail" Size="18" /><a href="mailto:@SiteContent.Contact.Email">@SiteContent.Contact.Email</a></li>
-                }
+                <li class="contact-mails">
+                    <Icon Name="mail" Size="18" />
+                    <span>
+                        @foreach (var email in SiteContent.Contact.Emails)
+                        {
+                            <a href="mailto:@email">@email</a>
+                        }
+                    </span>
+                </li>
                 <li><Icon Name="linkedin" Size="18" /><a href="@SiteContent.Contact.LinkedIn" target="_blank" rel="noopener">linkedin.com/in/spirodt</a></li>
                 <li><Icon Name="pin" Size="18" /><span>@T(SiteContent.Contact.Area)</span></li>
                 <li><Icon Name="clock" Size="18" /><span>@T(SiteContent.Hours)</span></li>

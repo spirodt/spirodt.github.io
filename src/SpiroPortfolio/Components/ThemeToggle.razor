@@ -1,0 +1,31 @@
+@inherits LocalizedComponent
+@inject IJSRuntime JS
+
+@* Светол / темен режим. Без избор — следи го системот; изборот се памти во прелистувачот. *@
+<button type="button" class="theme-toggle" @onclick="ToggleAsync"
+        aria-label="@(_dark ? T("Вклучи светол режим", "Switch to light mode") : T("Вклучи темен режим", "Switch to dark mode"))"
+        title="@(_dark ? T("Светол режим", "Light mode") : T("Темен режим", "Dark mode"))">
+    <Icon Name="@(_dark ? "sun" : "moon")" Size="18" />
+</button>
+
+@code {
+    private bool _dark;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender) return;
+        try
+        {
+            _dark = await JS.InvokeAsync<bool>("portfolio.isDark");
+            StateHasChanged();
+        }
+        catch (JSException) { }
+    }
+
+    private async Task ToggleAsync()
+    {
+        _dark = !_dark;
+        try { await JS.InvokeVoidAsync("portfolio.setTheme", _dark ? "dark" : "light"); }
+        catch (JSException) { }
+    }
+}

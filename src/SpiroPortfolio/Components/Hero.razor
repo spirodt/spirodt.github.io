@@ -40,9 +40,12 @@
                 <a class="btn btn-whatsapp" href="@SiteContent.Contact.WhatsAppHref" target="_blank" rel="noopener"><Icon Name="chat" Size="17" /> WhatsApp</a>
             </div>
             <ul class="hero-card-list">
-                @foreach (var s in SiteContent.Services)
+                @foreach (var c in SiteContent.ServiceCategories)
                 {
-                    <li><span class="dot"></span>@T(s.Title)</li>
+                    <li>
+                        <span class="dot"></span>
+                        <span class="hero-cat"><strong>@T(c.Name)</strong><small>@T(c.Short)</small></span>
+                    </li>
                 }
             </ul>
             <p class="hero-card-hours"><Icon Name="clock" Size="14" /> @T(SiteContent.Hours)</p>

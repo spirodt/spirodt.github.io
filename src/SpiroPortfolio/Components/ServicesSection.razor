@@ -8,19 +8,38 @@
             <h2>@T(SiteContent.ServicesTitle)</h2>
             <p class="lead">@T(SiteContent.ServicesLead)</p>
         </header>
-        <div class="card-grid services">
-            @foreach (var s in SiteContent.Services)
+
+        <div class="svc-filter" role="group" aria-label="@T("Филтрирај услуги", "Filter services")">
+            <button type="button" class="svc-chip @(_cat is null ? "active" : "")" aria-pressed="@Aria(_cat is null)"
+                    @onclick="() => _cat = null">
+                @T("Сите", "All") <span class="svc-count">@SiteContent.Services.Length</span>
+            </button>
+            @foreach (var c in SiteContent.ServiceCategories)
             {
-                <article class="card">
-                    <div class="card-icon"><Icon Name="@s.Icon" /></div>
-                    <h3>@T(s.Title)</h3>
-                    <p>@T(s.Text)</p>
-                    <ul class="ticks">
-                        @foreach (var point in s.Points)
-                        {
-                            <li><Icon Name="check" Size="16" /> @T(point)</li>
-                        }
-                    </ul>
+                var id = c.Id;
+                <button type="button" class="svc-chip @(_cat == id ? "active" : "")" aria-pressed="@Aria(_cat == id)"
+                        @onclick="() => _cat = id">
+                    @T(c.Name) <span class="svc-count">@SiteContent.Services.Count(s => s.Category == id)</span>
+                </button>
+            }
+        </div>
+
+        <div class="svc-grid">
+            @foreach (var s in Visible)
+            {
+                <article class="svc" @key="s.Art">
+                    <div class="svc-art" data-cat="@s.Category">@((MarkupString)ServiceArtLibrary.Get(s.Art))</div>
+                    <div class="svc-body">
+                        <span class="svc-cat" data-cat="@s.Category">@T(CategoryName(s.Category))</span>
+                        <h3>@T(s.Title)</h3>
+                        <p>@T(s.Text)</p>
+                        <ul class="ticks">
+                            @foreach (var point in s.Points)
+                            {
+                                <li><Icon Name="check" Size="16" /> @T(point)</li>
+                            }
+                        </ul>
+                    </div>
                 </article>
             }
             <article class="card card-cta">
@@ -34,3 +53,13 @@
         </div>
     </div>
 </section>
+
+@code {
+    private string? _cat;
+
+    private IEnumerable<ServiceItem> Visible =>
+        _cat is null ? SiteContent.Services : SiteContent.Services.Where(s => s.Category == _cat);
+
+    private static Loc CategoryName(string id) =>
+        SiteContent.ServiceCategories.First(c => c.Id == id).Name;
+}

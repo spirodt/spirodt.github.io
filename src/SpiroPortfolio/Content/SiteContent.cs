@@ -8,15 +8,16 @@ namespace SpiroPortfolio.Content;
 //  Ознаките  // TODO  се места каде што треба твој вистински податок.
 // ─────────────────────────────────────────────────────────────────────────────
 
-public record Contact(string Phone, string PhoneHref, string Email, string ViberHref, string WhatsAppHref, string LinkedIn, Loc Area)
+public record Contact(string Phone, string PhoneHref, string[] Emails, string ViberHref, string WhatsAppHref, string LinkedIn, Loc Area)
 {
-    /// <summary>Е-поштата се прикажува дури кога ќе ја замениш примерната адреса.</summary>
-    public bool HasEmail => !Email.Contains("example", StringComparison.OrdinalIgnoreCase);
+    /// <summary>Главна адреса — на неа одат пораките од формата.</summary>
+    public string PrimaryEmail => Emails[0];
 }
 public record Step(string Number, Loc Title, Loc Text);
 public record Reason(string Icon, Loc Title, Loc Text);
 public record Skill(string Name, Loc Group);
-public record ServiceItem(string Icon, Loc Title, Loc Text, Loc[] Points);
+public record ServiceItem(string Art, string Category, Loc Title, Loc Text, Loc[] Points);
+public record ServiceCategory(string Id, Loc Name, Loc Short);
 public record Product(string Icon, Loc Name, Loc Text, Loc Tag);
 public record TimelineItem(Loc Period, Loc Title, Loc Text, string[] Tech);
 public record Project(Loc Name, Loc Kind, Loc Text, string[] Tech, Loc[] Highlights);
@@ -28,9 +29,9 @@ public static class SiteContent
 {
     // ── Контакт ──────────────────────────────────────────────────────────────
     public static readonly Contact Contact = new(
-        Phone: "070 541 763",
+        Phone: "+389 70 541 763",
         PhoneHref: "tel:+38970541763",
-        Email: "info@example.mk",                    // TODO: е-пошта за клиенти (додека е „example“, не се прикажува)
+        Emails: ["bss@bssr.mk", "spiro@bssr.mk", "spirodt@hotmail.com"],
         ViberHref: "viber://chat?number=%2B38970541763",
         WhatsAppHref: "https://wa.me/38970541763",
         LinkedIn: "https://www.linkedin.com/in/spirodt/",
@@ -39,9 +40,13 @@ public static class SiteContent
     // TODO: твое работно време
     public static readonly Loc Hours = new("Пон–Саб · 08–20 ч", "Mon–Sat · 8am–8pm");
 
+    // ── Бренд ────────────────────────────────────────────────────────────────
+    public const string BrandName = "BSS";
+    public const string BrandFull = "Business Software Solutions";
+
     public static readonly Loc MetaTitle = new(
-        "Спиро — софтвер, веб и компјутерски сервис · Аеродром, Скопје",
-        "Spiro — software, web & computer service · Aerodrom, Skopje");
+        "BSS — Business Software Solutions · софтвер, веб и ИТ сервис · Аеродром, Скопје",
+        "BSS — Business Software Solutions · software, web & IT services · Aerodrom, Skopje");
 
     // ── Навигација ───────────────────────────────────────────────────────────
     public static readonly (string Id, Loc Label)[] Nav =
@@ -52,6 +57,7 @@ public static class SiteContent
         ("about", new("За мене", "About")),
         ("projects", new("Проекти", "Projects")),
         ("contact", new("Контакт", "Contact")),
+        ("download", new("Преземи BSSR", "Download BSSR")),
     ];
 
     // ── Херо ─────────────────────────────────────────────────────────────────
@@ -60,12 +66,12 @@ public static class SiteContent
         "Software developer · 18 years of experience");
 
     public static readonly Loc HeroTitle = new(
-        "Софтвер, веб и компјутери — од еден човек кој ги знае сите три.",
-        "Software, web and computers — from one person who knows all three.");
+        "Софтвер, веб, компјутери и cloud — од еден човек кој ги знае сите.",
+        "Software, web, hardware and cloud — from one person who knows them all.");
 
     public static readonly Loc HeroLead = new(
-        "Изработувам деловни програми и веб решенија, сервисирам компјутери и поставувам мрежи и бекап за фирми и домаќинства во Скопје. Брз одзив, јасна цена, одговор на македонски.",
-        "I build business software and web solutions, repair computers, and set up networks and backups for businesses and homes in Skopje. Quick response, clear pricing, straight answers.");
+        "Изработувам деловни програми и веб решенија, поправам компјутери и електроника, поставувам мрежи и бекап, и им помагам на тимовите со DevOps, cloud и AI. Брз одзив, јасна цена, одговор на македонски.",
+        "I build business software and web solutions, repair computers and electronics, set up networks and backups, and help teams with DevOps, cloud and AI. Quick response, clear pricing, straight answers.");
 
     public static readonly Loc CtaPrimary = new("Побарај понуда", "Request a quote");
     public static readonly Loc CtaSecondary = new("Погледни цени", "See pricing");
@@ -133,7 +139,10 @@ public static class SiteContent
         new("WinForms / .NET 4.8", new("Програмирање", "Development")),
         new("SQL Server", new("Бази и сервери", "Data & servers")),
         new("Redis", new("Бази и сервери", "Data & servers")),
-        new("Docker", new("Бази и сервери", "Data & servers")),
+        new("Docker", new("DevOps и cloud", "DevOps & cloud")),
+        new("GitHub Actions", new("DevOps и cloud", "DevOps & cloud")),
+        new("CI/CD", new("DevOps и cloud", "DevOps & cloud")),
+        new("Release management", new("DevOps и cloud", "DevOps & cloud")),
         new("Linux / Ubuntu", new("Бази и сервери", "Data & servers")),
         new("Windows", new("Бази и сервери", "Data & servers")),
         new("OpenWrt", new("Мрежи", "Networking")),
@@ -143,40 +152,95 @@ public static class SiteContent
         new("Nextcloud", new("Бекап", "Backup")),
         new("NAS / RAID", new("Бекап", "Backup")),
         new("PC / Laptop", new("Хардвер", "Hardware")),
+        new("Electronics repair", new("Хардвер", "Hardware")),
     ];
 
     // ── Услуги ───────────────────────────────────────────────────────────────
     public static readonly Loc ServicesTitle = new("Што можам да направам за вас", "What I can do for you");
     public static readonly Loc ServicesLead = new(
-        "Една точка за контакт за софтвер, веб и компјутерска опрема.",
-        "One point of contact for software, web and IT equipment.");
+        "Една точка за контакт — од поправка на лаптоп до DevOps, cloud и AI за вашиот софтверски тим.",
+        "One point of contact — from fixing a laptop to DevOps, cloud and AI for your software team.");
 
+    public static readonly ServiceCategory[] ServiceCategories =
+    [
+        new("home", new("Дома и канцеларија", "Home & office"),
+            new("Сервис, електроника, мрежи, бекап", "Repair, electronics, networks, backup")),
+        new("dev", new("Софтвер и веб", "Software & web"),
+            new("Програми, веб страни, AI", "Apps, websites, AI")),
+        new("pro", new("Консалтинг, DevOps и Cloud", "Consulting, DevOps & Cloud"),
+            new("За фирми и софтверски тимови", "For companies and software teams")),
+    ];
+
+    // Art = клуч на илустрацијата во Components/ServiceArtLibrary.cs
     public static readonly ServiceItem[] Services =
     [
-        new("code", new("Софтвер по мерка", "Custom software"),
-            new("Деловни програми прилагодени на вашиот начин на работа — од мала евиденција до целосен систем.",
-                "Business applications shaped around how you actually work — from a simple register to a full system."),
-            [new("Анализа на потребите", "Requirements analysis"), new("Десктоп или веб", "Desktop or web"), new("Обука и поддршка", "Training and support")]),
-
-        new("globe", new("Веб страни и апликации", "Websites & web apps"),
-            new("Брзи, модерни страни за вашиот бизнис, на македонски и англиски, кои се гледаат добро и на телефон.",
-                "Fast, modern sites for your business, in Macedonian and English, that look right on a phone."),
-            [new("Презентациски страни", "Business websites"), new("Веб апликации", "Web applications"), new("Домен и хостинг", "Domain and hosting")]),
-
-        new("wrench", new("Сервис на компјутери", "Computer repair"),
-            new("Хардверски и софтверски проблеми, бавни компјутери, вируси, надградби и нови конфигурации.",
-                "Hardware and software faults, slow PCs, malware, upgrades and new builds."),
+        // ── Дома и канцеларија
+        new("pc", "home", new("Сервис на компјутери", "Computer repair"),
+            new("Бавни компјутери, вируси, Windows, надградби и нови конфигурации — со бекап пред секоја интервенција.",
+                "Slow PCs, malware, Windows, upgrades and new builds — with a backup before every job."),
             [new("Дијагностика", "Diagnostics"), new("Инсталација на систем", "OS installation"), new("SSD и RAM надградба", "SSD & RAM upgrades")]),
 
-        new("network", new("Мрежи", "Networking"),
+        new("electronics", "home", new("Поправка на хардвер и електроника", "Hardware & electronics repair"),
+            new("Матични плочи, напојувања, конектори, тастатури, батерии и мала електроника — дијагностика и поправка до ниво на компонента.",
+                "Motherboards, power supplies, connectors, keyboards, batteries and small electronics — diagnosed and repaired down to the component."),
+            [new("Лемење и замена на компоненти", "Soldering & component replacement"), new("Напојувања и полначи", "Power supplies & chargers"), new("Периферија и уреди", "Peripherals & devices")]),
+
+        new("network", "home", new("Мрежи", "Networking"),
             new("Дизајн и поставување на мрежи за канцеларии, објекти и домови — кабел, Wi‑Fi, рутери и безбеден далечински пристап.",
                 "Design and setup of networks for offices, shops and homes — cabling, Wi‑Fi, routers and secure remote access."),
             [new("Wi‑Fi покриеност", "Wi‑Fi coverage"), new("VPN пристап", "VPN access"), new("Блокирање реклами и закани", "Ad & threat blocking")]),
 
-        new("shield", new("Одржување и бекап", "Maintenance & backup"),
+        new("backup", "home", new("Одржување и бекап", "Maintenance & backup"),
             new("Редовно одржување и автоматски бекап, за податоците да не исчезнат кога ќе откаже диск.",
                 "Regular maintenance and automated backups, so your data survives when a drive fails."),
             [new("Автоматски бекап", "Automated backup"), new("NAS и облак", "NAS and cloud"), new("Месечно одржување", "Monthly maintenance")]),
+
+        // ── Софтвер и веб
+        new("software", "dev", new("Софтвер по мерка", "Custom software"),
+            new("Деловни програми прилагодени на вашиот начин на работа — од мала евиденција до целосен систем.",
+                "Business applications shaped around how you actually work — from a simple register to a full system."),
+            [new("Анализа на потребите", "Requirements analysis"), new("Десктоп или веб", "Desktop or web"), new("Обука и поддршка", "Training and support")]),
+
+        new("web", "dev", new("Веб страни и апликации", "Websites & web apps"),
+            new("Брзи, модерни страни за вашиот бизнис, на македонски и англиски, кои се гледаат добро и на телефон.",
+                "Fast, modern sites for your business, in Macedonian and English, that look right on a phone."),
+            [new("Презентациски страни", "Business websites"), new("Веб апликации", "Web applications"), new("Домен и хостинг", "Domain and hosting")]),
+
+        new("ai", "dev", new("AI оптимизација", "AI optimization"),
+            new("Вградување вештачка интелигенција во вашите процеси и софтвер — корисно, мерливо и со контролирани трошоци.",
+                "Bringing AI into your processes and software — useful, measurable and with costs under control."),
+            [new("AI асистенти и автоматизација", "AI assistants & automation"), new("Интеграција во постоечки софтвер", "Integration into existing software"), new("Оптимизација на брзина и трошок", "Speed & cost optimization")]),
+
+        // ── Консалтинг, DevOps и Cloud
+        new("consulting", "pro", new("Консултации за развој и менаџирање софтвер", "Software development & management consulting"),
+            new("Архитектура, избор на технологии, code review и водење развојни тимови — совет од некој што 18 години гради деловен софтвер.",
+                "Architecture, technology choices, code review and leading dev teams — advice from someone who has built business software for 18 years."),
+            [new("Архитектура и code review", "Architecture & code review"), new("Избор на технологии", "Technology choices"), new("Процеси и водење тим", "Process & team leadership")]),
+
+        new("planning", "pro", new("План и естимации за проекти", "Project planning & estimation"),
+            new("Јасен опсег, фази, рокови и буџет за вашиот софтверски проект — пред да се напише првата линија код.",
+                "Clear scope, phases, timeline and budget for your software project — before the first line of code."),
+            [new("Спецификација и опсег", "Specification & scope"), new("Естимација по фази", "Phase-by-phase estimates"), new("Ризици и приоритети", "Risks & priorities")]),
+
+        new("devops", "pro", new("DevOps услуги", "DevOps services"),
+            new("Автоматизиран build, тестирање и испорака — помалку рачна работа, побрзи и посигурни верзии.",
+                "Automated build, test and delivery — less manual work, faster and safer releases."),
+            [new("CI/CD (GitHub Actions, Azure DevOps)", "CI/CD (GitHub Actions, Azure DevOps)"), new("Docker и контејнери", "Docker & containers"), new("Мониторинг и логови", "Monitoring & logs")]),
+
+        new("release", "pro", new("Release менаџмент", "Release management"),
+            new("Планирање на верзии, гранки и испораки, со rollback план и јасни белешки за секоја верзија.",
+                "Planning versions, branches and rollouts, with a rollback plan and clear notes for every release."),
+            [new("Верзионирање и гранки", "Versioning & branching"), new("Release белешки", "Release notes"), new("Rollback и hotfix процес", "Rollback & hotfix process")]),
+
+        new("cloud", "pro", new("Менаџирање на Cloud", "Cloud management"),
+            new("Поставување и одржување на инфраструктура во облак или на сопствен сервер — безбедно, документирано и со бекап.",
+                "Setting up and running infrastructure in the cloud or on your own server — secure, documented and backed up."),
+            [new("Сервери, бази и контејнери", "Servers, databases & containers"), new("Безбедност и пристап", "Security & access"), new("Надградби и мониторинг", "Updates & monitoring")]),
+
+        new("cloudcost", "pro", new("Анализа и оптимизација на cloud трошоци", "Cloud cost analysis & optimization"),
+            new("Детален преглед на месечната сметка: што плаќате, што не користите и каде може да заштедите.",
+                "A close look at your monthly bill: what you pay for, what sits unused and where you can save."),
+            [new("Анализа на сметката", "Bill analysis"), new("Right-sizing и автоматско гасење", "Right-sizing & auto-shutdown"), new("Извештај со препораки", "Report with recommendations")]),
     ];
 
     // ── Готови програми ──────────────────────────────────────────────────────
@@ -330,6 +394,11 @@ public static class SiteContent
         new("Веб страна", "Website"),
         new("Готова програма", "Ready-made software"),
         new("Софтвер по мерка", "Custom software"),
+        new("Поправка на електроника", "Electronics repair"),
+        new("Консалтинг / естимации", "Consulting / estimates"),
+        new("DevOps / Release", "DevOps / Release"),
+        new("Cloud / трошоци", "Cloud / costs"),
+        new("AI", "AI"),
         new("Друго", "Other"),
     ];
 }

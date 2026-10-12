@@ -4,15 +4,15 @@
     <div class="container footer-grid">
         <div class="footer-brand">
             <Logo Inverse="true" />
-            <p>@T("Софтвер, веб, сервис на компјутери, мрежи и бекап за фирми и домаќинства во Скопје.",
-                  "Software, web, computer repair, networks and backup for businesses and homes in Skopje.")</p>
+            <p>@T("Софтвер, веб, сервис на компјутери и електроника, мрежи и бекап, консалтинг, DevOps и cloud — за фирми и домаќинства во Скопје.",
+                  "Software, web, computer and electronics repair, networks and backup, consulting, DevOps and cloud — for businesses and homes in Skopje.")</p>
         </div>
         <div>
             <h4>@T("Услуги", "Services")</h4>
             <ul>
-                @foreach (var s in SiteContent.Services)
+                @foreach (var c in SiteContent.ServiceCategories)
                 {
-                    <li>@T(s.Title)</li>
+                    <li><strong>@T(c.Name)</strong><br /><span class="footer-sub">@T(c.Short)</span></li>
                 }
             </ul>
         </div>
@@ -21,9 +21,9 @@
             <ul>
                 <li><a href="@SiteContent.Contact.PhoneHref">@SiteContent.Contact.Phone</a></li>
                 <li><a href="@SiteContent.Contact.ViberHref">Viber</a> · <a href="@SiteContent.Contact.WhatsAppHref" target="_blank" rel="noopener">WhatsApp</a></li>
-                @if (SiteContent.Contact.HasEmail)
+                @foreach (var email in SiteContent.Contact.Emails)
                 {
-                    <li><a href="mailto:@SiteContent.Contact.Email">@SiteContent.Contact.Email</a></li>
+                    <li><a href="mailto:@email">@email</a></li>
                 }
                 <li>@T(SiteContent.Contact.Area)</li>
                 <li>@T(SiteContent.Hours)</li>
@@ -31,7 +31,8 @@
         </div>
     </div>
     <div class="container footer-bottom">
-        <p>© @DateTime.Now.Year @T("Спиро — ИТ решенија", "Spiro — IT solutions")</p>
+        <p>© @DateTime.Now.Year @SiteContent.BrandName — @SiteContent.BrandFull</p>
+        <a href="download" class="footer-download"><Icon Name="download" Size="16" /> @T("Преземи BSSR", "Download BSSR")</a>
         <a href="@SiteContent.Contact.LinkedIn" target="_blank" rel="noopener" aria-label="LinkedIn"><Icon Name="linkedin" Size="20" /></a>
     </div>
 </footer>

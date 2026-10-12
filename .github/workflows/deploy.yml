@@ -1,9 +1,12 @@
-# Автоматско објавување на GitHub Pages при секој push на main.
+# Автоматско објавување на GitHub Pages при секој push на main,
+# и секој ден во 06:00 (Скопје) за да се појават новите BSSR инсталации на /download.
 name: Deploy to GitHub Pages
 
 on:
   push:
     branches: [main]
+  schedule:
+    - cron: "0 4 * * *"   # 04:00 UTC = 06:00 во Скопје (лето)
   workflow_dispatch:
 
 permissions:
@@ -24,6 +27,11 @@ jobs:
       - uses: actions/setup-dotnet@v4
         with:
           dotnet-version: 10.0.x
+
+      - name: Refresh BSSR installers list
+        # Ако bssr.mk не одговори, чекорот не ја руши изградбата — останува последниот список.
+        continue-on-error: true
+        run: python3 .github/scripts/update_bssr_releases.py src/SpiroPortfolio/wwwroot/data/bssr-releases.json 5
 
       - name: Publish
         run: dotnet publish src/SpiroPortfolio/SpiroPortfolio.csproj -c Release -o out

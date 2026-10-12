@@ -1,0 +1,117 @@
+@page "/download"
+@inherits LocalizedComponent
+@inject ReleaseService Releases
+
+<section class="dl-hero">
+    <div class="hero-bg" aria-hidden="true"></div>
+    <div class="container">
+        <p class="eyebrow">BSSR · Windows</p>
+        <h1>@T("Преземи BSSR", "Download BSSR")</h1>
+        <p class="lead">
+            @T("Деловниот софтвер на BSS за продажба, фактурирање и евиденција. Најновата верзија е секогаш најгоре; претходните остануваат достапни ако ви треба враќање назад.",
+               "BSS business software for sales, invoicing and records. The newest version is always on top; earlier ones stay available if you need to roll back.")
+        </p>
+    </div>
+</section>
+
+<section class="section dl-section">
+    <div class="container dl-grid">
+        <div class="dl-main">
+            @if (_feed is null)
+            {
+                <div class="dl-latest dl-skeleton" aria-busy="true"></div>
+            }
+            else
+            {
+                var latest = _feed.Files.FirstOrDefault(f => f.Latest) ?? _feed.Files.First();
+                var previous = _feed.Files.Where(f => f != latest).ToArray();
+
+                <article class="dl-latest">
+                    <div class="dl-latest-icon"><Icon Name="windows" Size="34" /></div>
+                    <div class="dl-latest-info">
+                        <span class="dl-badge">@T("Најнова верзија", "Latest version")</span>
+                        <h2>BSSR 7 @(latest.Version is null ? "" : latest.Version)</h2>
+                        <p class="dl-meta">
+                            <span>@latest.Name</span>
+                            @if (!string.IsNullOrEmpty(latest.Date))
+                            {
+                                <span>@T("Објавена", "Released") @latest.DisplayDate</span>
+                            }
+                            @if (latest.SizeKb > 0)
+                            {
+                                <span>@latest.SizeMb</span>
+                            }
+                        </p>
+                    </div>
+                    <a class="btn btn-primary btn-lg dl-btn" href="@latest.Url" download>
+                        <Icon Name="download" Size="20" /> @T("Преземи", "Download")
+                    </a>
+                </article>
+
+                @if (previous.Length > 0)
+                {
+                    <h3 class="dl-subtitle">@T("Претходни верзии", "Previous versions")</h3>
+                    <div class="dl-table" role="table" aria-label="@T("Претходни верзии", "Previous versions")">
+                        <div class="dl-row dl-head" role="row">
+                            <span role="columnheader">@T("Верзија", "Version")</span>
+                            <span role="columnheader">@T("Датум", "Date")</span>
+                            <span role="columnheader">@T("Големина", "Size")</span>
+                            <span role="columnheader"><span class="sr-only">@T("Преземи", "Download")</span></span>
+                        </div>
+                        @foreach (var f in previous)
+                        {
+                            <div class="dl-row" role="row">
+                                <span role="cell" class="dl-ver">@(f.Version ?? f.Name)</span>
+                                <span role="cell">@f.DisplayDate</span>
+                                <span role="cell">@(f.SizeKb > 0 ? f.SizeMb : "—")</span>
+                                <span role="cell" class="dl-action">
+                                    <a class="btn btn-ghost btn-sm" href="@f.Url" download aria-label="@T("Преземи верзија", "Download version") @f.Version">
+                                        <Icon Name="download" Size="16" /> <span class="dl-action-text">@T("Преземи", "Download")</span>
+                                    </a>
+                                </span>
+                            </div>
+                        }
+                    </div>
+                }
+
+                <p class="fine">
+                    @T("Списокот се ажурира автоматски од", "This list updates automatically from")
+                    <a href="@_feed.Source" target="_blank" rel="noopener">bssr.mk</a>@(UpdatedText is null ? "" : $" · {UpdatedText}").
+                </p>
+            }
+        </div>
+
+        <aside class="dl-side">
+            <div class="dl-help">
+                <h3>@T("Помош при инсталација?", "Need help installing?")</h3>
+                <p>@T("Ќе ви помогнам на телефон, преку далечински пристап или на лице место.",
+                      "I'll help over the phone, by remote access or on site.")</p>
+                <a class="hero-phone" href="@SiteContent.Contact.PhoneHref">
+                    <span class="hero-phone-icon"><Icon Name="phone" Size="20" /></span>
+                    <span><small>@T("Телефон · Viber · WhatsApp", "Phone · Viber · WhatsApp")</small><strong>@SiteContent.Contact.Phone</strong></span>
+                </a>
+                <ul class="dl-mails">
+                    @foreach (var email in SiteContent.Contact.Emails)
+                    {
+                        <li><Icon Name="mail" Size="16" /><a href="mailto:@email">@email</a></li>
+                    }
+                </ul>
+            </div>
+            <div class="dl-links">
+                <a href="@ReleaseService.SourceUrl" target="_blank" rel="noopener"><Icon Name="folder" Size="18" /> @T("Сите верзии", "All versions")</a>
+                <a href="@(ReleaseService.SourceUrl + "Runtimes/")" target="_blank" rel="noopener"><Icon Name="folder" Size="18" /> @T("Runtime пакети", "Runtime packages")</a>
+            </div>
+        </aside>
+    </div>
+</section>
+
+@code {
+    private ReleaseFeed? _feed;
+
+    protected override async Task OnInitializedAsync() => _feed = await Releases.GetAsync();
+
+    private string? UpdatedText =>
+        DateTimeOffset.TryParse(_feed?.Updated, out var d)
+            ? T("последно", "last checked") + " " + d.ToLocalTime().ToString("dd.MM.yyyy HH:mm")
+            : null;
+}

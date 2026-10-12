@@ -1,20 +1,16 @@
-@inherits LocalizedComponent
-
+@* BSS — Business Software Solutions. Знакот: „B“ меѓу заграден код, килибарна точка. *@
 <span class="logo @(Inverse ? "logo-inverse" : "")">
-    <svg class="logo-mark" viewBox="0 0 40 40" width="38" height="38" aria-hidden="true">
-        <rect width="40" height="40" rx="10" fill="var(--navy)" />
-        <path d="M13 13.5 8.5 20 13 26.5" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" opacity=".55" />
-        <path d="M27 13.5 31.5 20 27 26.5" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" opacity=".55" />
-        <path d="M23.6 14.6c-.9-1-2.2-1.6-3.7-1.6-2.3 0-3.9 1.3-3.9 3.1 0 4.2 8.2 2.6 8.2 7 0 1.9-1.7 3.3-4.2 3.3-1.7 0-3.2-.7-4.1-1.9"
-              fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" />
-        <circle cx="31" cy="9" r="3" fill="var(--amber)" />
-    </svg>
+    @((MarkupString)Mark)
     <span class="logo-text">
-        <strong>@T("Спиро", "Spiro")</strong>
-        <small>@T("ИТ решенија", "IT solutions")</small>
+        <strong>@SiteContent.BrandName</strong>
+        <small>@SiteContent.BrandFull</small>
     </span>
 </span>
 
 @code {
     [Parameter] public bool Inverse { get; set; }
+
+    // Знакот е SVG низа (не Razor markup) за <text> да не го протолкува Razor.
+    private const string Mark =
+        """<svg class="logo-mark" viewBox="0 0 40 40" width="38" height="38" aria-hidden="true"><rect class="logo-bg" width="40" height="40" rx="10"/><path class="logo-fg" d="M12.5 13.5 8 20l4.5 6.5M27.5 13.5 32 20l-4.5 6.5" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" opacity=".55"/><text class="logo-letter" x="20" y="27.2" text-anchor="middle" font-family="Manrope, system-ui, sans-serif" font-weight="800" font-size="19">B</text><circle cx="31" cy="9" r="3" fill="#f5a524"/></svg>""";
 }

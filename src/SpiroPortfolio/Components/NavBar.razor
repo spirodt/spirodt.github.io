@@ -1,11 +1,14 @@
 @inherits LocalizedComponent
 @inject LanguageService Language
+@inject NavigationManager Nav
 @inject IJSRuntime JS
+@implements IDisposable
 
 <div class="topbar">
     <div class="container topbar-inner">
         <span><Icon Name="pin" Size="15" /> @T(SiteContent.Contact.Area)</span>
         <span class="topbar-hours"><Icon Name="clock" Size="15" /> @T(SiteContent.Hours)</span>
+        <a href="mailto:@SiteContent.Contact.PrimaryEmail" class="topbar-mail"><Icon Name="mail" Size="15" /> @SiteContent.Contact.PrimaryEmail</a>
         <a href="@SiteContent.Contact.PhoneHref" class="topbar-phone"><Icon Name="phone" Size="15" /> @SiteContent.Contact.Phone</a>
     </div>
 </div>
@@ -19,11 +22,21 @@
         <nav class="nav-links" aria-label="@T("Главна навигација", "Main navigation")">
             @foreach (var (id, label) in SiteContent.Nav)
             {
-                <a href="#@id" @onclick="() => Go(id)" @onclick:preventDefault>@T(label)</a>
+                if (id == "download")
+                {
+                    <a href="download" class="nav-download @(IsDownload ? "active" : "")" @onclick="() => _open = false">
+                        <Icon Name="download" Size="16" /> @T(label)
+                    </a>
+                }
+                else
+                {
+                    <a href="#@id" @onclick="() => Go(id)" @onclick:preventDefault>@T(label)</a>
+                }
             }
         </nav>
 
         <div class="nav-actions">
+            <ThemeToggle />
             <div class="lang-switch" role="group" aria-label="@T("Јазик", "Language")">
                 <button type="button" class="@(Lang == Lang.Mk ? "active" : "")" aria-pressed="@Aria(Lang == Lang.Mk)"
                         @onclick="() => Language.SetAsync(Lang.Mk)">МК</button>
@@ -44,9 +57,27 @@
 @code {
     private bool _open;
 
+    private bool IsHome => Nav.ToBaseRelativePath(Nav.Uri).Split('?', '#')[0].Length == 0;
+    private bool IsDownload => Nav.ToBaseRelativePath(Nav.Uri).StartsWith("download", StringComparison.OrdinalIgnoreCase);
+
+    protected override void OnInitialized() => Nav.LocationChanged += OnLocationChanged;
+
+    private void OnLocationChanged(object? sender, Microsoft.AspNetCore.Components.Routing.LocationChangedEventArgs e)
+    {
+        _open = false;
+        InvokeAsync(StateHasChanged);
+    }
+
+    public void Dispose() => Nav.LocationChanged -= OnLocationChanged;
+
     private async Task Go(string? id)
     {
         _open = false;
+        if (!IsHome)
+        {
+            // Од друга страна (пр. /download): прво назад на почетна, па скролај кога секцијата ќе се појави.
+            Nav.NavigateTo("");
+        }
         await JS.InvokeVoidAsync("portfolio.scrollToSection", id ?? "top");
     }
 }

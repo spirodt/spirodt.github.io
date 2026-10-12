@@ -59,15 +59,15 @@ public sealed class ContactService(IConfiguration config)
     }
 
     /// <summary>
-    /// Резервен начин кога нема Formspree: е-пошта ако е поставена, инаку WhatsApp со пополнета порака.
+    /// Резервен начин кога нема Formspree: ја отвора е-пошта програмата на посетителот
+    /// со пополнета порака до главната адреса, со копија до другите две.
     /// </summary>
     public static string FallbackLink(ContactRequest r)
     {
-        var text = $"Барање од веб: {r.Topic}\n\n{r.Message}\n\n—\n{r.Name}\n{r.Phone}\n{r.Email}";
-        if (!SiteContent.Contact.HasEmail)
-            return $"{SiteContent.Contact.WhatsAppHref}?text={Uri.EscapeDataString(text)}";
-
+        var c = SiteContent.Contact;
+        var text = $"{r.Message}\n\n—\n{r.Name}\n{r.Phone}\n{r.Email}";
         var subject = Uri.EscapeDataString($"Барање од веб: {r.Topic}");
-        return $"mailto:{SiteContent.Contact.Email}?subject={subject}&body={Uri.EscapeDataString(text)}";
+        var cc = string.Join(",", c.Emails.Skip(1));
+        return $"mailto:{c.PrimaryEmail}?cc={cc}&subject={subject}&body={Uri.EscapeDataString(text)}";
     }
 }
