@@ -82,7 +82,7 @@
         var query = new List<string> { $"utm_source={source}", "utm_medium=share", $"utm_campaign={Uri.EscapeDataString(Campaign)}" };
         var code = RefCode ?? _myRef;
         if (!string.IsNullOrEmpty(code)) query.Insert(0, $"ref={Uri.EscapeDataString(code)}");
-        if (Lang == Lang.En) query.Add("lang=en");
+        if (Lang != Lang.Mk) query.Add($"lang={LanguageService.Code(Lang)}");
         return $"{Nav.BaseUri}{Path}?{string.Join("&", query)}";
     }
 

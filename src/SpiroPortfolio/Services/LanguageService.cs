@@ -3,12 +3,34 @@ using SpiroPortfolio.Content;
 
 namespace SpiroPortfolio.Services;
 
-public enum Lang { Mk, En }
+public enum Lang { Mk, En, De, Sq }
 
-/// <summary>Двојазичен текст. Секој текст на страната е еден ваков запис.</summary>
+/// <summary>Јазиците на страната, по редослед во изборникот.</summary>
+public static class Languages
+{
+    public static readonly (Lang Lang, string Code, string Short, string Native)[] All =
+    [
+        (Lang.Mk, "mk", "МК", "Македонски"),
+        (Lang.En, "en", "EN", "English"),
+        (Lang.De, "de", "DE", "Deutsch"),
+        (Lang.Sq, "sq", "SQ", "Shqip"),
+    ];
+}
+
+/// <summary>
+/// Текст на страната. Се пишува македонски + англиски; германскиот и албанскиот
+/// се бараат по англискиот во Content/Translations.g.cs (од translations.tsv).
+/// </summary>
 public readonly record struct Loc(string Mk, string En)
 {
-    public string Get(Lang lang) => lang == Lang.En ? En : Mk;
+    public string Get(Lang lang) => lang switch
+    {
+        Lang.Mk => Mk,
+        Lang.En => En,
+        Lang.De => Translations.ByEnglish.TryGetValue(En, out var t) ? t.De : En,
+        Lang.Sq => Translations.ByEnglish.TryGetValue(En, out var t) ? t.Sq : En,
+        _ => Mk
+    };
 }
 
 /// <summary>
@@ -53,7 +75,6 @@ public sealed class LanguageService(IJSRuntime js)
         Changed?.Invoke();
     }
 
-    public Task ToggleAsync() => SetAsync(Current == Lang.Mk ? Lang.En : Lang.Mk);
 
     private async Task ApplyAsync()
     {
@@ -68,12 +89,14 @@ public sealed class LanguageService(IJSRuntime js)
         }
     }
 
-    public static string Code(Lang lang) => lang == Lang.En ? "en" : "mk";
+    public static string Code(Lang lang) => Languages.All.First(l => l.Lang == lang).Code;
 
     private static Lang? Parse(string? value) => value?.Trim().ToLowerInvariant() switch
     {
         "en" => Lang.En,
         "mk" => Lang.Mk,
+        "de" => Lang.De,
+        "sq" or "al" => Lang.Sq,
         _ => null
     };
 }

@@ -592,3 +592,15 @@ body.scrolled .nav { box-shadow: 0 6px 24px -16px rgba(15, 23, 42, .25); }
     *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
 }
 .refer-steps .step::after { display: none; }
+
+/* ─── Избор на јазик (МК / EN / DE / SQ) ─────────────────────────────────── */
+.lang-picker { position: relative; display: inline-flex; align-items: center; height: 40px; border: 1px solid var(--line); border-radius: 10px; background: var(--tint); color: var(--ink-2); }
+.lang-picker .icon { position: absolute; left: 10px; pointer-events: none; }
+.lang-picker select {
+    appearance: none; -webkit-appearance: none; border: 0; background: transparent; color: var(--ink);
+    font: inherit; font-size: .82rem; font-weight: 800; letter-spacing: .04em;
+    height: 100%; padding: 0 26px 0 32px; border-radius: 10px; cursor: pointer;
+}
+.lang-picker::after { content: ""; position: absolute; right: 11px; top: 50%; width: 6px; height: 6px; margin-top: -5px; border-right: 2px solid currentColor; border-bottom: 2px solid currentColor; transform: rotate(45deg); pointer-events: none; }
+.lang-picker select:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+.lang-picker option { color: #0f172a; background: #fff; }

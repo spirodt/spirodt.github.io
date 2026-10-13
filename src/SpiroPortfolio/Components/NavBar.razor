@@ -37,11 +37,14 @@
 
         <div class="nav-actions">
             <ThemeToggle />
-            <div class="lang-switch" role="group" aria-label="@T("Јазик", "Language")">
-                <button type="button" class="@(Lang == Lang.Mk ? "active" : "")" aria-pressed="@Aria(Lang == Lang.Mk)"
-                        @onclick="() => Language.SetAsync(Lang.Mk)">МК</button>
-                <button type="button" class="@(Lang == Lang.En ? "active" : "")" aria-pressed="@Aria(Lang == Lang.En)"
-                        @onclick="() => Language.SetAsync(Lang.En)">EN</button>
+            <div class="lang-picker">
+                <Icon Name="globe" Size="16" />
+                <select aria-label="@T("Јазик", "Language")" value="@LanguageService.Code(Lang)" @onchange="OnLanguageChanged">
+                    @foreach (var l in Languages.All)
+                    {
+                        <option value="@l.Code" title="@l.Native">@l.Short</option>
+                    }
+                </select>
             </div>
             <a class="btn btn-primary btn-sm nav-cta" href="@SiteContent.Contact.PhoneHref">
                 <Icon Name="phone" Size="16" /> @T("Јави се", "Call")
@@ -69,6 +72,14 @@
     }
 
     public void Dispose() => Nav.LocationChanged -= OnLocationChanged;
+
+    private Task OnLanguageChanged(ChangeEventArgs e)
+    {
+        var code = e.Value?.ToString();
+        foreach (var l in Languages.All)
+            if (l.Code == code) return Language.SetAsync(l.Lang);
+        return Task.CompletedTask;
+    }
 
     private async Task Go(string? id)
     {

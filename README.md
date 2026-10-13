@@ -1,6 +1,6 @@
 # BSS — Business Software Solutions (Blazor WebAssembly, .NET 10)
 
-Двојазична (МК / EN) страна за промоција на услуги: софтвер, веб, компјутерски сервис, мрежи и бекап — насочена кон клиенти во Аеродром, Скопје.
+Четирјазична (МК / EN / DE / SQ) страна за промоција на услуги: софтвер, веб, компјутерски сервис, мрежи и бекап — насочена кон клиенти во Аеродром, Скопје.
 
 ## Стартување
 
@@ -56,10 +56,18 @@ dotnet watch
 - По објавување, освежи го прегледот: Facebook → https://developers.facebook.com/tools/debug/ · LinkedIn → https://www.linkedin.com/post-inspector/
 - Со сопствен домен: GitHub → Settings → Secrets and variables → Actions → **Variables** → `SITE_URL` = `https://bss.bssr.mk/`.
 
-## Јазик
+## Јазици (МК / EN / DE / SQ)
 
-- Копчињата **МК / EN** горе десно; изборот се памти во прелистувачот.
-- Директна врска на англиски: `.../?lang=en` (корисно за LinkedIn).
+- Изборот е горе десно (глобус); се памти во прелистувачот.
+- Директни врски: `?lang=en`, `?lang=de`, `?lang=sq`.
+- Текстовите се пишуваат **македонски + англиски** како досега (`new("мк", "en")`, `T("мк", "en")`).
+- Германски и албански се во **`src/SpiroPortfolio/Content/translations.tsv`** — еден ред по текст: `англиски<TAB>германски<TAB>албански`.
+- По промена на tsv-то или по додавање нов текст:
+  ```bash
+  python tools/i18n/gen_translations.py --check   # кои текстови немаат превод
+  python tools/i18n/gen_translations.py           # го генерира Content/Translations.g.cs
+  ```
+  Текст без превод се прикажува на англиски (страната не паѓа).
 
 ## Темен режим
 

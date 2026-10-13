@@ -10,7 +10,7 @@ public abstract class LocalizedComponent : ComponentBase
 
     protected string T(Loc text) => text.Get(Lang);
 
-    protected string T(string mk, string en) => Lang == Lang.En ? en : mk;
+    protected string T(string mk, string en) => new Loc(mk, en).Get(Lang);
 
     /// <summary>ARIA атрибутите бараат "true"/"false" како текст, не HTML boolean.</summary>
     protected static string Aria(bool value) => value ? "true" : "false";
