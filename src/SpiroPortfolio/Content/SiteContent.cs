@@ -53,7 +53,7 @@ public static class SiteContent
     [
         ("services", new("Услуги", "Services")),
         ("software", new("Програми", "Software")),
-        ("pricing", new("Цени", "Pricing")),
+        // ("pricing", new("Цени", "Pricing")),
         ("about", new("За мене", "About")),
         ("projects", new("Проекти", "Projects")),
         ("contact", new("Контакт", "Contact")),
