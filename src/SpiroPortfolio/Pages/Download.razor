@@ -97,6 +97,11 @@
                     }
                 </ul>
             </div>
+            <h3 class="dl-share-title">@T("Сподели ја страната", "Share this page")</h3>
+            <div class="dl-share">
+                <ShareButtons Path="download" Campaign="download" Compact="true"
+                              Message="@(new Loc("Преземи ја најновата верзија на BSSR:", "Download the latest BSSR version:"))" />
+            </div>
             <div class="dl-links">
                 <a href="@ReleaseService.SourceUrl" target="_blank" rel="noopener"><Icon Name="folder" Size="18" /> @T("Сите верзии", "All versions")</a>
                 <a href="@(ReleaseService.SourceUrl + "Runtimes/")" target="_blank" rel="noopener"><Icon Name="folder" Size="18" /> @T("Runtime пакети", "Runtime packages")</a>

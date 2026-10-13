@@ -1,0 +1,23 @@
+@inherits LocalizedComponent
+
+<section class="section" id="refer">
+    <div class="container refer-home">
+        <div class="refer-home-cta">
+            <span class="refer-icon"><Icon Name="gift" Size="26" /></span>
+            <div>
+                <p class="eyebrow">@T("Препорака", "Referral")</p>
+                <h2>@T(SiteContent.ReferTitle)</h2>
+                <p class="lead">@T(SiteContent.ReferLead)</p>
+                @if (!string.IsNullOrEmpty(T(SiteContent.ReferReward)))
+                {
+                    <p class="refer-reward"><Icon Name="gift" Size="18" /> @T(SiteContent.ReferReward)</p>
+                }
+                <a class="btn btn-primary" href="refer"><Icon Name="link" Size="18" /> @T("Направи свој линк за препорака", "Create your referral link")</a>
+            </div>
+        </div>
+        <div class="refer-home-share">
+            <ShareButtons Path="" Campaign="home"
+                          Label="@(new Loc("Или едноставно споделете ја страната", "Or simply share this page"))" />
+        </div>
+    </div>
+</section>

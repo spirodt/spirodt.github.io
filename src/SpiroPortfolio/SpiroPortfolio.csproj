@@ -5,6 +5,7 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <RootNamespace>SpiroPortfolio</RootNamespace>
+    <Version>1.1.0</Version>
     <!-- Помал bundle: не ни требаат култури од ICU, преводите се наши -->
     <InvariantGlobalization>true</InvariantGlobalization>
     <BlazorWebAssemblyLoadAllGlobalizationData>false</BlazorWebAssemblyLoadAllGlobalizationData>

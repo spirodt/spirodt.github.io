@@ -35,6 +35,30 @@ window.portfolio = {
     },
     open(url) {
         window.location.href = url;
+    },
+    openWindow(url) {
+        const w = window.open(url, '_blank', 'noopener,noreferrer,width=640,height=640');
+        if (!w) window.location.href = url;
+    },
+
+    // ── Споделување
+    canNativeShare() {
+        return !!navigator.share;
+    },
+    async nativeShare(title, text, url) {
+        if (!navigator.share) return false;
+        try { await navigator.share({ title, text, url }); return true; }
+        catch { return false; } // корисникот откажал
+    },
+    async copyText(text) {
+        try { await navigator.clipboard.writeText(text); return true; }
+        catch {
+            const ta = document.createElement('textarea');
+            ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+            document.body.appendChild(ta); ta.select();
+            let ok = false; try { ok = document.execCommand('copy'); } catch { }
+            ta.remove(); return ok;
+        }
     }
 };
 

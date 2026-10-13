@@ -16,6 +16,32 @@
             }
             document.documentElement.dataset.theme = t;
         })();
+
+        // Од каде дојде посетителот: ?ref=код (препорака), utm_* (кампања/мрежа) или друга страна (referrer).
+        // Се чува САМО во прелистувачот на посетителот и се праќа заедно со пораката од контакт формата.
+        (function () {
+            try {
+                var p = new URLSearchParams(location.search);
+                var ref = (p.get('ref') || '').replace(/[^a-z0-9\-]/gi, '').slice(0, 40) || null;
+                var src = p.get('utm_source'), med = p.get('utm_medium'), camp = p.get('utm_campaign');
+                var host = null;
+                try { if (document.referrer) { var u = new URL(document.referrer); if (u.host !== location.host) host = u.host; } } catch (e) { }
+                var touch = {
+                    ref: ref, source: src || host || 'direct', medium: med || (host ? 'referral' : null),
+                    campaign: camp || null, referrer: host, landing: location.pathname, at: new Date().toISOString()
+                };
+                if (!localStorage.getItem('bss_first_touch')) localStorage.setItem('bss_first_touch', JSON.stringify(touch));
+                if (ref || src || host) localStorage.setItem('bss_last_touch', JSON.stringify(touch));
+                if (ref && !localStorage.getItem('bss_referred_by')) localStorage.setItem('bss_referred_by', ref);
+                localStorage.setItem('bss_visits', String((+localStorage.getItem('bss_visits') || 0) + 1));
+                // Тргни ги параметрите од адресата, за посетителот да не го препрати туѓиот код.
+                if (ref || src || med || camp) {
+                    ['ref', 'utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'fbclid'].forEach(function (k) { p.delete(k); });
+                    var q = p.toString();
+                    history.replaceState(null, '', location.pathname + (q ? '?' + q : '') + location.hash);
+                }
+            } catch (e) { }
+        })();
     </script>
 
     <!-- SEO: Blazor WASM се црта во прелистувач, па клучните податоци стојат и тука за Google -->
@@ -23,11 +49,27 @@
     <meta name="keywords" content="сервис компјутери Аеродром, поправка лаптоп Скопје, програма за фактурирање, програма за продажба, водење згради, мрежа, бекап, веб страна, .NET девелопер, поправка електроника, DevOps, release management, cloud cost optimization, AI консултант, естимација софтверски проект" />
     <meta name="theme-color" content="#0b1f4d" />
     <meta name="color-scheme" content="light dark" />
+    <!-- Преглед при споделување (Facebook, LinkedIn, Viber, WhatsApp, X).
+         Апсолутните адреси ги менува workflow-от ако страната се пресели (сопствен домен). -->
+    <link rel="canonical" href="https://spirodt.github.io/" />
     <meta property="og:type" content="website" />
-    <meta property="og:title" content="BSS — Business Software Solutions" />
-    <meta property="og:description" content="Софтвер, веб, сервис и електроника, мрежи, DevOps, cloud и AI · Аеродром, Скопје · +389 70 541 763" />
+    <meta property="og:site_name" content="BSS — Business Software Solutions" />
+    <meta property="og:url" content="https://spirodt.github.io/" />
+    <meta property="og:title" content="BSS — софтвер, веб и ИТ сервис · Аеродром, Скопје" />
+    <meta property="og:description" content="Деловни програми, веб страни, сервис на компјутери и електроника, мрежи и бекап, DevOps, cloud и AI. 18 години искуство. ☎ +389 70 541 763" />
+    <meta property="og:image" content="https://spirodt.github.io/og/og-home.png" />
+    <meta property="og:image:secure_url" content="https://spirodt.github.io/og/og-home.png" />
+    <meta property="og:image:type" content="image/png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="BSS — Business Software Solutions: софтвер, веб и ИТ сервис во Аеродром, Скопје" />
     <meta property="og:locale" content="mk_MK" />
     <meta property="og:locale:alternate" content="en_US" />
+    <meta name="author" content="Boban Spirovski" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="BSS — софтвер, веб и ИТ сервис · Аеродром, Скопје" />
+    <meta name="twitter:description" content="Деловни програми, веб страни, сервис на компјутери и електроника, мрежи и бекап, DevOps, cloud и AI. ☎ +389 70 541 763" />
+    <meta name="twitter:image" content="https://spirodt.github.io/og/og-home.png" />
     <link rel="alternate" hreflang="mk" href="?lang=mk" />
     <link rel="alternate" hreflang="en" href="?lang=en" />
 
@@ -37,6 +79,8 @@
       "@type": "ProfessionalService",
       "name": "BSS — Business Software Solutions",
       "alternateName": "BSS",
+      "url": "https://spirodt.github.io/",
+      "image": "https://spirodt.github.io/og/og-home.png",
       "description": "Деловни програми, веб страни, сервис на компјутери и електроника, мрежи и бекап, софтверски консалтинг, DevOps, cloud и AI.",
       "areaServed": [{ "@type": "Place", "name": "Аеродром, Скопје" }, { "@type": "City", "name": "Скопје" }],
       "address": { "@type": "PostalAddress", "addressLocality": "Скопје", "addressRegion": "Аеродром", "addressCountry": "MK" },

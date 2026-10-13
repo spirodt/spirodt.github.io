@@ -1,0 +1,105 @@
+@page "/refer"
+@inherits LocalizedComponent
+@inject AttributionService Attribution
+@inject ContactService Contact
+@inject NavigationManager Nav
+@inject IJSRuntime JS
+
+<section class="dl-hero">
+    <div class="hero-bg" aria-hidden="true"></div>
+    <div class="container">
+        <p class="eyebrow">@T("Препорака", "Referral")</p>
+        <h1>@T(SiteContent.ReferTitle)</h1>
+        <p class="lead">@T(SiteContent.ReferLead)</p>
+        @if (!string.IsNullOrEmpty(T(SiteContent.ReferReward)))
+        {
+            <p class="refer-reward"><Icon Name="gift" Size="18" /> @T(SiteContent.ReferReward)</p>
+        }
+    </div>
+</section>
+
+<section class="section dl-section">
+    <div class="container refer-grid">
+        <div class="refer-card">
+            @if (_mine is null)
+            {
+                <h2>@T("Направете го вашиот линк", "Create your link")</h2>
+                <form @onsubmit="CreateAsync" novalidate>
+                    <label class="field">
+                        <span>@T("Вашето име", "Your name") *</span>
+                        <input @bind="_name" autocomplete="name" placeholder="@T("пр. Марко Петровски", "e.g. Mark Peterson")" />
+                        @if (_error) { <em class="err">@T("Внесете име — така ќе знам кој ме препорачал.", "Enter your name — that's how I'll know who referred me.")</em> }
+                    </label>
+                    <label class="field">
+                        <span>@T("Телефон", "Phone") <small>(@T("не е задолжително — за да ви се заблагодарам", "optional — so I can thank you"))</small></span>
+                        <input @bind="_phone" type="tel" autocomplete="tel" />
+                    </label>
+                    <button type="submit" class="btn btn-primary wide" disabled="@_busy">
+                        <Icon Name="link" Size="18" /> @T("Направи линк", "Create link")
+                    </button>
+                    <p class="fine">@T("Линкот се чува само во вашиот прелистувач. Името е дел од кодот во линкот.",
+                                       "The link is stored only in your browser. Your name is part of the code in the link.")</p>
+                </form>
+            }
+            else
+            {
+                <span class="dl-badge">@T("Вашиот личен линк", "Your personal link")</span>
+                <h2>@T("Здраво", "Hi"), @_mine.Name!</h2>
+                <div class="refer-link">
+                    <code>@MyLink</code>
+                </div>
+                <p class="refer-code">@T("Вашиот код:", "Your code:") <strong>@_mine.Code</strong> — @T("пријателите можат и само да го кажат кога ќе се јават.", "friends can also just mention it when they call.")</p>
+
+                <ShareButtons Path="" RefCode="@_mine.Code" Campaign="referral"
+                              Label="@(new Loc("Споделете го линкот", "Share your link"))"
+                              Message="@(new Loc("Ако ти треба помош со компјутер, програма или веб страна — BSS во Аеродром, препорачувам:", "If you need help with a computer, software or a website — BSS in Skopje, I recommend:"))" />
+
+                <button type="button" class="btn btn-ghost btn-sm refer-reset" @onclick="ResetAsync">@T("Направи нов линк", "Create a new link")</button>
+            }
+        </div>
+
+        <ol class="refer-steps">
+            @foreach (var step in SiteContent.ReferSteps)
+            {
+                <li class="step">
+                    <span class="step-num">@step.Number</span>
+                    <h3>@T(step.Title)</h3>
+                    <p>@T(step.Text)</p>
+                </li>
+            }
+        </ol>
+    </div>
+</section>
+
+@code {
+    private MyReferral? _mine;
+    private string _name = "", _phone = "";
+    private bool _error, _busy;
+
+    private string MyLink => $"{Nav.BaseUri}?ref={_mine?.Code}";
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender) return;
+        _mine = await Attribution.GetMyReferralAsync();
+        if (_mine is not null) StateHasChanged();
+    }
+
+    private async Task CreateAsync()
+    {
+        _error = string.IsNullOrWhiteSpace(_name);
+        if (_error) return;
+        _busy = true;
+        _mine = await Attribution.CreateMyReferralAsync(_name, _phone);
+        _busy = false;
+        // Ако е поставен сервис за е-пошта, тивко јавуваме дека има нов препорачувач (код → име, телефон).
+        _ = Contact.NotifyNewReferrerAsync(_mine);
+    }
+
+    private async Task ResetAsync()
+    {
+        await Attribution.ForgetMyReferralAsync();
+        _mine = null;
+        _name = _phone = "";
+    }
+}

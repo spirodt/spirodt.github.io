@@ -26,18 +26,35 @@ dotnet watch
 | Години во искуството | `Timeline` |
 | Бројки во херото (18+, 6, 24ч) | `Stats` |
 
-## Контакт форма
+## Контакт форма — праќање на е-пошта
 
-Страната е статична (нема сервер), па формата работи на два начини:
+Страната е статична (нема сервер), па пораките се праќаат преку бесплатен сервис:
 
-1. **Без поставување** — „Испрати“ ја отвора е-пошта програмата на посетителот со пополнета порака до bss@bssr.mk (копија до другите две адреси).
-2. **Со Formspree (препорачано, бесплатно до 50 пораки/месец)** — направи форма на formspree.io и стави ја адресата во `wwwroot/appsettings.json`:
+1. Отвори https://web3forms.com, направи бесплатна сметка со **bss@bssr.mk** и земи **Access Key** (бесплатно до 250 пораки/месец).
+2. Стави го во `src/SpiroPortfolio/wwwroot/appsettings.json`:
+   ```json
+   { "Web3FormsKey": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx", "FormEndpoint": "" }
+   ```
+3. Push. Пораките стигнуваат на bss@bssr.mk; „Одговори“ оди директно до посетителот.
 
-```json
-{ "FormEndpoint": "https://formspree.io/f/xxxxxxx" }
-```
+Алтернатива: Formspree → `"FormEndpoint": "https://formspree.io/f/xxxxxxx"`.
+Без клуч, „Испрати барање“ ја отвора е-пошта програмата на посетителот (до bss@bssr.mk, копија до другите две).
+Копчето **„Испрати преку е-пошта“** секогаш ја отвора е-пошта програмата.
 
-Пораките ќе ти стигнуваат на е-пошта без посетителот да отвора своја програма.
+Со секоја порака оди и **од каде дошол посетителот** (препорака, Facebook, Google, број на посети…).
+
+## Препораки и извор на посетите
+
+- Скриптата во `wwwroot/index.html` ги памти `?ref=`, `utm_source/medium/campaign` и страната од која дошол посетителот (само во неговиот прелистувач — `bss_first_touch`, `bss_last_touch`, `bss_referred_by`, `bss_visits`).
+- `/refer` — секој прави свој линк `https://spirodt.github.io/?ref=marko-petrov-k7m2` (името е дел од кодот). Ако е поставен Web3Forms, добиваш е-пошта „Нов линк за препорака“ со име, телефон и код.
+- Наградата за препорака: `ReferReward` во `SiteContent.cs` (празно = не се прикажува).
+- Линкови за флаери/реклами: додај `?utm_source=flyer` или `?utm_source=fb-ads&utm_campaign=oktomvri` за да знаеш од каде дошле.
+
+## Споделување на Facebook / LinkedIn
+
+- Сликите за преглед се во `wwwroot/og/` (1200×630). Повторно генерирање: `python tools/og-images/make_og_images.py <папка-со-manrope-woff2>`.
+- По објавување, освежи го прегледот: Facebook → https://developers.facebook.com/tools/debug/ · LinkedIn → https://www.linkedin.com/post-inspector/
+- Со сопствен домен: GitHub → Settings → Secrets and variables → Actions → **Variables** → `SITE_URL` = `https://bss.bssr.mk/`.
 
 ## Јазик
 

@@ -46,6 +46,18 @@ jobs:
             sed -i "s|<base href=\"/\" />|<base href=\"/${REPO}/\" />|" out/wwwroot/index.html
           fi
 
+      - name: Share previews (Facebook / LinkedIn) per page
+        # Адреса на страната: repo variable SITE_URL (пр. https://bss.bssr.mk/) или автоматски од GitHub.
+        env:
+          SITE_URL: ${{ vars.SITE_URL }}
+        run: |
+          REPO="${GITHUB_REPOSITORY#*/}"
+          OWNER="${GITHUB_REPOSITORY_OWNER,,}"
+          if [ -z "$SITE_URL" ]; then
+            if [ "${REPO,,}" = "${OWNER}.github.io" ]; then SITE_URL="https://${OWNER}.github.io/"; else SITE_URL="https://${OWNER}.github.io/${REPO}/"; fi
+          fi
+          python3 .github/scripts/make_static_pages.py out/wwwroot "$SITE_URL"
+
       - name: SPA fallback + disable Jekyll
         run: |
           cp out/wwwroot/index.html out/wwwroot/404.html

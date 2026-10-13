@@ -57,6 +57,7 @@ public static class SiteContent
         ("about", new("За мене", "About")),
         ("projects", new("Проекти", "Projects")),
         ("contact", new("Контакт", "Contact")),
+        ("refer", new("Препорачај", "Refer")),
         ("download", new("Преземи BSSR", "Download BSSR")),
     ];
 
@@ -378,6 +379,25 @@ public static class SiteContent
             new(new("Софтвер по мерка", "Custom software"), new("по понуда", "quoted"), new("бесплатна прва средба", "free first meeting")),
             new(new("Час работа (девелопер)", "Developer hour"), new("1.500 ден.", "1,500 MKD"), new("", "")),
         ]),
+    ];
+
+    // ── Препорака ────────────────────────────────────────────────────────────
+    public static readonly Loc ReferTitle = new("Препорачај нè", "Refer us");
+    public static readonly Loc ReferLead = new(
+        "Знаете некој на кого му треба помош со компјутер, програма, веб страна или cloud? Направете свој линк и споделете го — кога ќе се јави, ќе знам дека дошол преку вас.",
+        "Know someone who needs help with a computer, software, a website or the cloud? Create your own link and share it — when they get in touch, I'll know they came through you.");
+
+    // TODO: впиши ја наградата за препорака (пр. „10% попуст на следната услуга“). Празно = не се прикажува.
+    public static readonly Loc ReferReward = new("", "");
+
+    public static readonly Step[] ReferSteps =
+    [
+        new("01", new("Направете линк", "Create your link"),
+            new("Внесете го вашето име — линкот е личен и го носи вашиот код.", "Enter your name — the link is personal and carries your code.")),
+        new("02", new("Споделете", "Share it"),
+            new("Facebook, Instagram, LinkedIn, Viber, WhatsApp или е-пошта — со еден клик.", "Facebook, Instagram, LinkedIn, Viber, WhatsApp or email — in one click.")),
+        new("03", new("Јас знам дека е од вас", "I know it came from you"),
+            new("Кога ќе ме контактираат преку вашиот линк, пораката го носи вашиот код.", "When they contact me through your link, the message carries your code.")),
     ];
 
     // ── Контакт ──────────────────────────────────────────────────────────────

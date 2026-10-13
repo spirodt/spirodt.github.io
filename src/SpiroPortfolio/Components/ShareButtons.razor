@@ -1,0 +1,129 @@
+@inherits LocalizedComponent
+@inject NavigationManager Nav
+@inject IJSRuntime JS
+@inject AttributionService Attribution
+
+@*
+    Копчиња за споделување. Секој линк носи:
+      utm_source = мрежата (facebook, linkedin…), за да се знае од каде дошол посетителот
+      ref        = личниот код на тој што споделува (ако направил свој линк на /refer)
+*@
+<div class="share @(Compact ? "share-compact" : "")">
+    @if (!Compact)
+    {
+        <p class="share-label">@T(Label ?? new Loc("Сподели", "Share"))</p>
+    }
+    <div class="share-row">
+        <a class="share-btn s-linkedin" href="@Href("linkedin")" target="_blank" rel="noopener" aria-label="LinkedIn">
+            <Icon Name="linkedin" Size="18" /><span>LinkedIn</span>
+        </a>
+        <a class="share-btn s-facebook" href="@Href("facebook")" target="_blank" rel="noopener" aria-label="Facebook">
+            <Icon Name="facebook" Size="18" /><span>Facebook</span>
+        </a>
+        <button type="button" class="share-btn s-instagram" @onclick="InstagramAsync" aria-label="Instagram">
+            <Icon Name="instagram" Size="18" /><span>Instagram</span>
+        </button>
+        <a class="share-btn s-email" href="@Href("email")" aria-label="@T("Е-пошта", "Email")">
+            <Icon Name="mail" Size="18" /><span>@T("Е-пошта", "Email")</span>
+        </a>
+        <a class="share-btn s-viber" href="@Href("viber")" aria-label="Viber">
+            <Icon Name="viber" Size="18" /><span>Viber</span>
+        </a>
+        <a class="share-btn s-whatsapp" href="@Href("whatsapp")" target="_blank" rel="noopener" aria-label="WhatsApp">
+            <Icon Name="whatsapp" Size="18" /><span>WhatsApp</span>
+        </a>
+        <button type="button" class="share-btn s-copy" @onclick="CopyAsync" aria-label="@T("Копирај линк", "Copy link")">
+            <Icon Name="@(_copied ? "check" : "link")" Size="18" /><span>@(_copied ? T("Копирано", "Copied") : T("Копирај линк", "Copy link"))</span>
+        </button>
+        @if (_native)
+        {
+            <button type="button" class="share-btn s-more" @onclick="NativeAsync" aria-label="@T("Друго…", "More…")">
+                <Icon Name="share" Size="18" /><span>@T("Друго…", "More…")</span>
+            </button>
+        }
+    </div>
+    @if (_toast is not null)
+    {
+        <p class="share-toast" role="status">@_toast</p>
+    }
+</div>
+
+@code {
+    /// <summary>Страна што се споделува, релативно („“ = почетна, „download“, „refer“).</summary>
+    [Parameter] public string Path { get; set; } = "";
+    [Parameter] public Loc? Label { get; set; }
+    [Parameter] public Loc? Message { get; set; }
+    [Parameter] public bool Compact { get; set; }
+    /// <summary>Ако е зададен, се користи наместо зачуваниот личен код (на /refer веднаш по креирање).</summary>
+    [Parameter] public string? RefCode { get; set; }
+    [Parameter] public string Campaign { get; set; } = "share";
+
+    private string? _myRef;
+    private bool _native, _copied;
+    private string? _toast;
+
+    private string ShareText => T(Message ?? new Loc(
+        "BSS — софтвер, веб, сервис на компјутери, мрежи, DevOps и cloud во Аеродром, Скопје. Препорачувам:",
+        "BSS — software, web, computer repair, networks, DevOps and cloud in Skopje. Recommended:"));
+
+    private string Title => $"{SiteContent.BrandName} — {SiteContent.BrandFull}";
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender) return;
+        _myRef = (await Attribution.GetMyReferralAsync())?.Code;
+        try { _native = await JS.InvokeAsync<bool>("portfolio.canNativeShare"); } catch (JSException) { }
+        StateHasChanged();
+    }
+
+    /// <summary>Апсолутен линк со извор и препорака.</summary>
+    private string Url(string source)
+    {
+        var query = new List<string> { $"utm_source={source}", "utm_medium=share", $"utm_campaign={Uri.EscapeDataString(Campaign)}" };
+        var code = RefCode ?? _myRef;
+        if (!string.IsNullOrEmpty(code)) query.Insert(0, $"ref={Uri.EscapeDataString(code)}");
+        if (Lang == Lang.En) query.Add("lang=en");
+        return $"{Nav.BaseUri}{Path}?{string.Join("&", query)}";
+    }
+
+    private string Href(string network)
+    {
+        var url = Url(network);
+        Func<string, string> e = Uri.EscapeDataString;
+        return network switch
+        {
+            "linkedin" => $"https://www.linkedin.com/sharing/share-offsite/?url={e(url)}",
+            "facebook" => $"https://www.facebook.com/sharer/sharer.php?u={e(url)}",
+            "whatsapp" => $"https://wa.me/?text={e($"{ShareText} {url}")}",
+            "viber" => $"viber://forward?text={e($"{ShareText} {url}")}",
+            "email" => $"mailto:?subject={e(Title)}&body={e($"{ShareText}\n\n{url}\n\n{SiteContent.Contact.Phone}")}",
+            _ => url
+        };
+    }
+
+    private async Task CopyAsync()
+    {
+        var ok = await JS.InvokeAsync<bool>("portfolio.copyText", Url("copy"));
+        _copied = ok;
+        _toast = ok ? null : T("Копирањето не успеа — означете го линкот рачно.", "Copy failed — select the link manually.");
+        StateHasChanged();
+        await Task.Delay(2200);
+        _copied = false;
+        StateHasChanged();
+    }
+
+    private async Task NativeAsync() =>
+        await JS.InvokeAsync<bool>("portfolio.nativeShare", Title, ShareText, Url("native"));
+
+    // Instagram нема веб-линк за споделување: на телефон се отвора системското мени (каде е и Instagram),
+    // на компјутер линкот се копира и се отвора Instagram за да се залепи во сторија или порака.
+    private async Task InstagramAsync()
+    {
+        if (await JS.InvokeAsync<bool>("portfolio.nativeShare", Title, ShareText, Url("instagram"))) return;
+        await JS.InvokeAsync<bool>("portfolio.copyText", Url("instagram"));
+        _toast = T("Линкот е копиран — залепете го во Instagram сторија (налепница „Link“) или во порака.",
+                   "Link copied — paste it into an Instagram story (“Link” sticker) or a message.");
+        StateHasChanged();
+        await JS.InvokeVoidAsync("portfolio.openWindow", "https://www.instagram.com/");
+    }
+}

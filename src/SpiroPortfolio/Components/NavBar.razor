@@ -22,10 +22,10 @@
         <nav class="nav-links" aria-label="@T("Главна навигација", "Main navigation")">
             @foreach (var (id, label) in SiteContent.Nav)
             {
-                if (id == "download")
+                if (id is "download" or "refer")
                 {
-                    <a href="download" class="nav-download @(IsDownload ? "active" : "")" @onclick="() => _open = false">
-                        <Icon Name="download" Size="16" /> @T(label)
+                    <a href="@id" class="nav-page @(IsPage(id) ? "active" : "")" @onclick="() => _open = false">
+                        <Icon Name="@(id == "download" ? "download" : "gift")" Size="16" /> @T(label)
                     </a>
                 }
                 else
@@ -58,7 +58,7 @@
     private bool _open;
 
     private bool IsHome => Nav.ToBaseRelativePath(Nav.Uri).Split('?', '#')[0].Length == 0;
-    private bool IsDownload => Nav.ToBaseRelativePath(Nav.Uri).StartsWith("download", StringComparison.OrdinalIgnoreCase);
+    private bool IsPage(string page) => Nav.ToBaseRelativePath(Nav.Uri).StartsWith(page, StringComparison.OrdinalIgnoreCase);
 
     protected override void OnInitialized() => Nav.LocationChanged += OnLocationChanged;
 

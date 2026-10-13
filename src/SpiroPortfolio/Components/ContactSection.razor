@@ -1,5 +1,6 @@
 @inherits LocalizedComponent
 @inject ContactService Contact
+@inject AttributionService Attribution
 @inject IJSRuntime JS
 
 <section class="section section-tint" id="contact">
@@ -31,18 +32,30 @@
         </div>
 
         <div class="form-card">
-            @if (_state == SendResult.Sent)
+            @if (_state is SendResult.Sent or SendResult.OpenedMailClient)
             {
                 <div class="form-done" role="status">
-                    <span class="card-icon"><Icon Name="check" /></span>
-                    <h3>@T("Пораката е испратена", "Message sent")</h3>
-                    <p>@T("Ви благодарам! Ќе ве контактирам наскоро.", "Thank you! I'll get back to you shortly.")</p>
+                    <span class="card-icon"><Icon Name="@(_state == SendResult.Sent ? "check" : "mail")" /></span>
+                    @if (_state == SendResult.Sent)
+                    {
+                        <h3>@T("Пораката е испратена", "Message sent")</h3>
+                        <p>@T("Ви благодарам! Ќе ве контактирам наскоро.", "Thank you! I'll get back to you shortly.")</p>
+                    }
+                    else
+                    {
+                        <h3>@T("Се отвори вашата е-пошта", "Your email app opened")</h3>
+                        <p>@T("Пораката е подготвена — само кликнете „Испрати“ во програмата за е-пошта.", "The message is ready — just press “Send” in your email app.")</p>
+                    }
                     <button type="button" class="btn btn-ghost" @onclick="Reset">@T("Нова порака", "New message")</button>
                 </div>
             }
             else
             {
                 <form @onsubmit="SubmitAsync" novalidate>
+                    @if (!string.IsNullOrEmpty(_referredBy))
+                    {
+                        <p class="form-ref"><Icon Name="gift" Size="16" /> @T("Дојдовте преку препорака", "You came through a referral"): <strong>@_referredBy</strong></p>
+                    }
                     <div class="field-row">
                         <label class="field">
                             <span>@T("Име и презиме", "Full name") *</span>
@@ -80,14 +93,22 @@
 
                     @if (_state == SendResult.Failed)
                     {
-                        <p class="err block">@T("Не успеа испраќањето. Обидете се повторно или јавете се на телефон.", "Sending failed. Please try again or call me.")</p>
+                        <p class="err block">@T("Не успеа испраќањето. Пробајте „Испрати преку е-пошта“ или јавете се на телефон.", "Sending failed. Try “Send via email” or give me a call.")</p>
                     }
 
-                    <button type="submit" class="btn btn-primary wide" disabled="@_sending">
-                        @(_sending ? T("Се испраќа…", "Sending…") : T("Испрати барање", "Send request"))
-                        <Icon Name="arrow" Size="18" />
-                    </button>
-                    <p class="fine">@T("Податоците ги користам само за да ви одговорам.", "I only use your details to reply to you.")</p>
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary" disabled="@_sending">
+                            @(_sending ? T("Се испраќа…", "Sending…") : T("Испрати барање", "Send request"))
+                            <Icon Name="arrow" Size="18" />
+                        </button>
+                        <button type="button" class="btn btn-ghost" @onclick="SendViaEmailAsync" disabled="@_sending">
+                            <Icon Name="mail" Size="18" /> @T("Испрати преку е-пошта", "Send via email")
+                        </button>
+                    </div>
+                    <p class="fine">
+                        @T("Податоците ги користам само за да ви одговорам. Со пораката оди и од каде дојдовте на страната (пр. препорака, Facebook, Google).",
+                           "I only use your details to reply to you. The message also includes how you found this site (e.g. referral, Facebook, Google).")
+                    </p>
                 </form>
             }
         </div>
@@ -100,7 +121,16 @@
     private SendResult? _state;
     private bool _sending;
 
-    private async Task SubmitAsync()
+    private string? _referredBy;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender) return;
+        _referredBy = (await Attribution.GetAsync()).ReferredBy;
+        if (_referredBy is not null) StateHasChanged();
+    }
+
+    private bool Validate()
     {
         _errors.Clear();
         _state = null;
@@ -109,23 +139,33 @@
         var hasPhone = _model.Phone.Count(char.IsDigit) >= 8;
         if (!hasEmail && !hasPhone) _errors.Add("email");
         if (_model.Message.Trim().Length < 5) _errors.Add("message");
-        if (_errors.Count > 0) return;
-
         if (string.IsNullOrEmpty(_model.Topic)) _model.Topic = T(SiteContent.ContactTopics[^1]);
+        return _errors.Count == 0;
+    }
 
+    private async Task SubmitAsync()
+    {
+        if (!Validate()) return;
         _sending = true;
         var result = await Contact.SendAsync(_model);
         _sending = false;
 
         if (result == SendResult.OpenedMailClient)
-        {
-            await JS.InvokeVoidAsync("portfolio.open", ContactService.FallbackLink(_model));
-            _state = SendResult.Sent;
-        }
+            await OpenMailAsync();
         else
-        {
             _state = result;
-        }
+    }
+
+    private async Task SendViaEmailAsync()
+    {
+        if (!Validate()) return;
+        await OpenMailAsync();
+    }
+
+    private async Task OpenMailAsync()
+    {
+        await JS.InvokeVoidAsync("portfolio.open", await Contact.MailtoLinkAsync(_model));
+        _state = SendResult.OpenedMailClient;
     }
 
     private void Reset()

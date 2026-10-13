@@ -9,6 +9,7 @@ builder.RootComponents.Add<HeadOutlet>("head::after");
 
 builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
 builder.Services.AddScoped<LanguageService>();
+builder.Services.AddScoped<AttributionService>();
 builder.Services.AddScoped<ContactService>();
 builder.Services.AddScoped<ReleaseService>();
 
