@@ -23,3 +23,10 @@ jobs:
 
       - name: Static share pages
         run: python3 .github/scripts/make_static_pages.py out/wwwroot "https://spirodt.github.io/"
+
+      - name: Upload built site (preview)
+        uses: actions/upload-artifact@v4
+        with:
+          name: site-preview
+          path: out/wwwroot
+          retention-days: 3
