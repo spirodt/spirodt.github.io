@@ -74,6 +74,12 @@ dotnet watch
 Копчето со месечина/сонце во менито. Без избор, страната го следи системот (Windows/телефон); изборот се памти.
 Боите се во `wwwroot/css/site.css` → `:root` (светли) и `:root[data-theme="dark"]` (темни).
 
+## Страна „ПОС за ресторани“ (`/restorani`)
+
+- Содржината е во `Pages/Restaurants.razor` (текстови МК + EN, DE/SQ во `translations.tsv`), стиловите `rp-*` во `site.css`.
+- Сликите се во `wwwroot/img/restorani/` — пред замена, сокриј ги вистинските имиња на вработени и бази.
+- Сликата за преглед при споделување: `og/og-restorani.png` (`tools/og-images/make_og_images.py`, страна `og-restorani`).
+
 ## Страна „Преземи BSSR“ (`/download`)
 
 Ги прикажува последните 5 инсталации од https://bssr.mk/bss/Installer/BSSR7/ (BSS.exe + 4 претходни).

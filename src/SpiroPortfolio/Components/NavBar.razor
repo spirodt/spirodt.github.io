@@ -22,10 +22,10 @@
         <nav class="nav-links" aria-label="@T("Главна навигација", "Main navigation")">
             @foreach (var (id, label) in SiteContent.Nav)
             {
-                if (id is "download" or "refer")
+                if (id is "download" or "refer" or "restorani")
                 {
                     <a href="@id" class="nav-page @(IsPage(id) ? "active" : "")" @onclick="() => _open = false">
-                        <Icon Name="@(id == "download" ? "download" : "gift")" Size="16" /> @T(label)
+                        <Icon Name="@(id switch { "download" => "download", "restorani" => "receipt", _ => "gift" })" Size="16" /> @T(label)
                     </a>
                 }
                 else
