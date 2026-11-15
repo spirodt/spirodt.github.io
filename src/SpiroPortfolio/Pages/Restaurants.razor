@@ -304,8 +304,8 @@
             <Icon Name="close" Size="22" />
         </button>
         <figure @onclick:stopPropagation="true">
-            <img src="img/restorani/@(_zoom)" alt="@T(_zoomCaption!)" />
-            <figcaption>@T(_zoomCaption!)</figcaption>
+            <img src="img/restorani/@(_zoom)" alt="@T(_zoomCaption)" />
+            <figcaption>@T(_zoomCaption)</figcaption>
         </figure>
     </div>
 }
@@ -319,7 +319,7 @@
 
     private int _report;
     private string? _zoom;
-    private Loc? _zoomCaption;
+    private Loc _zoomCaption;
     private ElementReference _lightbox;
     private bool _focusLightbox;
 
@@ -471,7 +471,7 @@
     private void CloseZoom()
     {
         _zoom = null;
-        _zoomCaption = null;
+        _zoomCaption = default;
     }
 
     private void OnLightboxKey(KeyboardEventArgs e)
