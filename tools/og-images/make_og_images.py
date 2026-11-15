@@ -4,7 +4,7 @@
 
 Употреба (потребни: pip install playwright && playwright install chromium):
     python tools/og-images/make_og_images.py <папка-со-manrope-woff2> [chromium-патека]
-Излез: src/SpiroPortfolio/wwwroot/og/og-home.png, og-download.png, og-refer.png
+Излез: src/SpiroPortfolio/wwwroot/og/og-home.png, og-download.png, og-refer.png, og-restorani.png
 """
 import pathlib
 import re
@@ -43,6 +43,12 @@ PAGES = {
         sub="Продажба · Фактурирање · Евиденција на уплати · Резервации · Гаранции · Најновата верзија секогаш на врвот",
         right=f"""<div class="one t-dev">{art("software")}</div>""",
     ),
+    "og-restorani": dict(
+        eyebrow="ПОС за ресторани",
+        title="БСС ПОС за ресторани",
+        sub="Мобилен ПОС за келнери · Налози за кујна и шанк · Фискални печатачи · Работа без интернет · Извештаи по вработен",
+        right="""<div class="one shot"><img src="../img/restorani/desktop-pos.webp" alt=""></div>""",
+    ),
     "og-refer": dict(
         eyebrow="Препорака",
         title="Препорачај нè — сподели го твојот линк",
@@ -76,6 +82,7 @@ p{margin:20px 0 0;font-size:20px;line-height:1.45;color:rgba(255,255,255,.78);ma
 .tile,.one{border-radius:18px;overflow:hidden;box-shadow:0 20px 40px -24px rgba(11,31,77,.5)}
 .tile svg,.one svg{display:block;width:100%;height:auto}
 .one{width:100%}
+.shot{background:#fff;border:6px solid #fff}.shot img{display:block;width:100%;height:auto;border-radius:12px}
 .t-home{background:#fff1d6}.t-dev{background:#e3eafd}.t-pro{background:#e8ecf4}
 .bar{position:absolute;left:0;right:0;bottom:0;height:78px;background:#f5a524;display:flex;align-items:center;justify-content:space-between;padding:0 64px;color:#0b1f4d}
 .bar .phone{font-size:30px;font-weight:800;letter-spacing:-.01em}

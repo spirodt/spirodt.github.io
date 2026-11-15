@@ -1,0 +1,490 @@
+@page "/restorani"
+@inherits LocalizedComponent
+
+@*
+    БСС ПОС за ресторани — промотивна страна.
+    Сликите се во wwwroot/img/restorani/ (имињата на вработените се демо имиња).
+*@
+
+<section class="rp-hero">
+    <div class="hero-bg" aria-hidden="true"></div>
+    <div class="container rp-hero-grid">
+        <div>
+            <p class="eyebrow">@T("ПОС за ресторани и кафе-барови", "POS for restaurants and cafés")</p>
+            <h1>@T("Секоја нарачка. Секоја сметка.", "Every order. Every bill.") <span class="rp-accent">@T("Под контрола.", "Under control.")</span></h1>
+            <p class="lead">
+                @T("Келнерите нарачуваат од телефон, кујната и шанкот добиваат налог веднаш, касата издава фискална сметка, а вие го гледате прометот по вработен уште истата вечер. Сè работи на вашата локална мрежа, без зависност од интернет.",
+                   "Waiters order from their phones, the kitchen and bar get the ticket instantly, the till issues the fiscal receipt, and you see turnover per employee the same evening. Everything runs on your local network, with no dependence on the internet.")
+            </p>
+            <div class="rp-ctas">
+                <a class="btn btn-primary btn-lg" href="restorani#rp-contact" @onclick='() => Scroll("rp-contact")' @onclick:preventDefault>
+                    @T("Закажете демонстрација", "Book a demo") <Icon Name="arrow" Size="18" />
+                </a>
+                <a class="btn btn-ghost btn-lg" href="restorani#rp-shift" @onclick='() => Scroll("rp-shift")' @onclick:preventDefault>
+                    @T("Погледнете една смена", "See one shift")
+                </a>
+            </div>
+            <p class="rp-made">
+                @T("Развиено во Скопје, на македонски јазик и прилагодено на македонските фискални печатачи.",
+                   "Developed in Skopje, in Macedonian, and built for Macedonian fiscal printers.")
+            </p>
+        </div>
+        <div class="rp-receipt-stage">
+            <div class="rp-receipt" role="img" aria-label="@T("Сметка со функциите на системот", "A bill listing the system's features")">
+                <div class="rp-r-center rp-r-title">@T("БСС 10 · ВЕЧЕРНА СМЕНА", "BSS 10 · EVENING SHIFT")</div>
+                <div class="rp-r-center">@T("Сметка", "Bill") #35363 · 21:51</div>
+                <hr />
+                @foreach (var (label, value) in ReceiptLines)
+                {
+                    <div class="rp-r-row"><span>@T(label)</span><span class="rp-r-dots"></span><b>@value</b></div>
+                }
+                <hr />
+                <div class="rp-r-total"><span>@T("ВКУПНО", "TOTAL")</span><span>@T("мирна смена", "a calm shift")</span></div>
+                <div class="rp-r-center rp-r-thanks">@T("ВИ БЛАГОДАРИМЕ · ПОВЕЛЕТЕ ПАК", "THANK YOU · COME AGAIN")</div>
+                <div class="rp-r-barcode" aria-hidden="true"></div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<div class="rp-stats">
+    <div class="container rp-stats-grid">
+        @foreach (var (value, label) in Stats)
+        {
+            <div class="rp-stat"><strong>@value</strong><span>@T(label)</span></div>
+        }
+    </div>
+</div>
+
+<section class="section" id="rp-shift">
+    <div class="container">
+        <header class="section-head">
+            <p class="eyebrow">@T("Една смена со БСС", "One shift with BSS")</p>
+            <h2>@T("Од првата најава до последниот извештај", "From the first login to the last report")</h2>
+            <p class="lead">@T("Така изгледа вечер во ресторан што работи со БСС. Сите слики се од самиот систем.", "This is an evening in a restaurant that runs on BSS. Every picture is from the system itself.")</p>
+        </header>
+
+        <div class="rp-shift">
+            @foreach (var s in Shift)
+            {
+                <article class="rp-step">
+                    <div class="rp-time">@s.Time<small>@T(s.When)</small></div>
+                    <div>
+                        <h3>@T(s.Title)</h3>
+                        <p>@T(s.Text)</p>
+                    </div>
+                    @if (s.Image is null)
+                    {
+                        <div class="rp-tickets" aria-label="@T("Пример налози за кујна и шанк", "Sample kitchen and bar tickets")">
+                            <div class="rp-ticket">
+                                <div class="rp-ticket-head"><span>@T("НАЛОГ", "ORDER") #35363</span><span class="rp-tag">@T("КУЈНА", "KITCHEN")</span></div>
+                                <div>1 × Biftek medaljon</div>
+                                <div>2 × Grcka salata-M</div>
+                                <div class="rp-ticket-note">@T("медиум печено", "medium")</div>
+                            </div>
+                            <div class="rp-ticket">
+                                <div class="rp-ticket-head"><span>@T("НАЛОГ", "ORDER") #35363</span><span class="rp-tag">@T("ШАНК", "BAR")</span></div>
+                                <div>2 × Golemo espresso</div>
+                                <div>1 × Fanta orange</div>
+                                <div>1 × Gazirana voda 0.75</div>
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <button type="button" class="rp-shot @(s.Phone ? "rp-shot-phone" : "")" @onclick="() => Zoom(s.Image!, s.Title)">
+                            <img src="img/restorani/@(s.Image)" alt="@T(s.Title)" loading="lazy" />
+                        </button>
+                    }
+                </article>
+            }
+        </div>
+    </div>
+</section>
+
+<section class="section section-tint">
+    <div class="container">
+        <header class="section-head">
+            <p class="eyebrow">@T("Секој уред е каса", "Every device is a till")</p>
+            <h2>@T("Телефон за келнерот, голем екран за шанкот", "A phone for the waiter, a big screen for the bar")</h2>
+            <p class="lead">@T("Истиот систем работи на Андроид телефон, таблет и компјутер. Келнерите ја користат мобилната апликација, а на шанкот и на касата има десктоп ПОС со големи копчиња за артикли.",
+                               "The same system runs on Android phones, tablets and computers. Waiters use the mobile app; the bar and till use the desktop POS with large item buttons.")</p>
+        </header>
+        <div class="rp-duo">
+            <figure>
+                <button type="button" class="rp-shot rp-shot-phone rp-phone-lg" @onclick='() => Zoom("mobilen-pos.webp", new("Мобилен ПОС", "Mobile POS"))'>
+                    <img src="img/restorani/mobilen-pos.webp" alt="@T("Мобилен ПОС на телефон", "Mobile POS on a phone")" loading="lazy" />
+                </button>
+                <figcaption><b>@T("Мобилен ПОС.", "Mobile POS.")</b> @T("Андроид апликација за келнери", "Android app for waiters")</figcaption>
+            </figure>
+            <figure>
+                <button type="button" class="rp-shot" @onclick='() => Zoom("pocetna.webp", new("Контролна табла", "Dashboard"))'>
+                    <img src="img/restorani/pocetna.webp" alt="@T("Контролна табла со денешен промет и топ артикли", "Dashboard with today's turnover and top items")" loading="lazy" />
+                </button>
+                <figcaption><b>@T("Контролна табла.", "Dashboard.")</b> @T("Денешен промет, отворени и затворени сметки, фискални сметки од последното затворање и топ 10 артикли за 30 дена", "Today's turnover, open and closed bills, fiscal receipts since the last closing and the top 10 items over 30 days")</figcaption>
+            </figure>
+        </div>
+        <div class="rp-features">
+            @foreach (var f in Features)
+            {
+                <div class="rp-feature">
+                    <span class="card-icon small"><Icon Name="@f.Icon" Size="20" /></span>
+                    <h3>@T(f.Title)</h3>
+                    <p>@T(f.Text)</p>
+                </div>
+            }
+        </div>
+    </div>
+</section>
+
+<section class="section" id="rp-fiscal">
+    <div class="container rp-fiscal">
+        <div>
+            <p class="eyebrow">@T("Фискално", "Fiscal")</p>
+            <h2>@T("Фискалниот печатач е дел од системот", "The fiscal printer is part of the system")</h2>
+            <p class="lead">@T("БСС комуницира директно со фискалниот печатач во објектот. Касиерот не мора да ги внесува артиклите двапати, а секоја фискална сметка е поврзана со сметката и со вработениот.",
+                               "BSS talks directly to the fiscal printer on site. The cashier never enters items twice, and every fiscal receipt is linked to its bill and its employee.")</p>
+            <div class="rp-chips" aria-label="@T("Поддржани фискални печатачи", "Supported fiscal printers")">
+                @foreach (var p in FiscalPrinters)
+                {
+                    <span class="rp-chip">@p</span>
+                }
+            </div>
+        </div>
+        <ul class="rp-checklist" aria-label="@T("Фискални операции", "Fiscal operations")">
+            @foreach (var (title, note) in FiscalOps)
+            {
+                <li><span class="rp-tick"><Icon Name="check" Size="14" /></span><div><b>@T(title)</b><small>@T(note)</small></div></li>
+            }
+        </ul>
+    </div>
+</section>
+
+<section class="section section-navy" id="rp-offline">
+    <div class="container rp-offline">
+        <div>
+            <p class="eyebrow">@T("Без интернет", "No internet needed")</p>
+            <h2>@T("Кога интернетот паѓа, ресторанот не застанува", "When the internet goes down, the restaurant keeps going")</h2>
+            <p class="rp-offline-lead">@T("БСС работи на сервер во вашиот објект. Телефоните, касата и печатачите комуницираат преку локалната Wi-Fi мрежа, без облак и без надворешни сервиси.",
+                                         "BSS runs on a server in your venue. Phones, the till and the printers talk over the local Wi-Fi, with no cloud and no outside services.")</p>
+            <ul class="rp-offline-list">
+                @foreach (var (title, text) in OfflinePoints)
+                {
+                    <li><Icon Name="check" Size="18" /><div><b>@T(title)</b><span>@T(text)</span></div></li>
+                }
+            </ul>
+        </div>
+        <div class="rp-net" aria-label="@T("Шема на локалната мрежа", "Local network diagram")">
+            <div class="rp-node rp-server"><Icon Name="network" Size="20" /> @T("Сервер во објектот", "Server in your venue")</div>
+            <div class="rp-wifi">@T("ЛОКАЛНА WI-FI МРЕЖА", "LOCAL WI-FI NETWORK")</div>
+            <div class="rp-net-row">
+                <div class="rp-node"><Icon Name="phone" Size="18" /> @T("Телефони на келнерите", "Waiters' phones")</div>
+                <div class="rp-node"><Icon Name="cart" Size="18" /> @T("Каса и шанк", "Till and bar")</div>
+            </div>
+            <div class="rp-net-row">
+                <div class="rp-node"><Icon Name="receipt" Size="18" /> @T("Печатач во кујна", "Kitchen printer")</div>
+                <div class="rp-node"><Icon Name="receipt" Size="18" /> @T("Печатач на шанк", "Bar printer")</div>
+                <div class="rp-node"><Icon Name="receipt" Size="18" /> @T("Фискален печатач", "Fiscal printer")</div>
+            </div>
+            <p class="rp-no-cloud">@T("Интернет не е потребен за работа", "No internet required to operate")</p>
+        </div>
+    </div>
+</section>
+
+<section class="section" id="rp-reports">
+    <div class="container">
+        <header class="section-head">
+            <p class="eyebrow">@T("Извештаи за сопственикот", "Reports for the owner")</p>
+            <h2>@T("Знаете кој, што и колку продал", "Know who sold what, and how much")</h2>
+            <p class="lead">@T("Посебна апликација за извештаи, достапна само за менаџментот. Секој извештај се филтрира по вработен и период (денес, вчера, последни 7 дена, овој месец) и се печати или зачувува како PDF.",
+                               "A separate reports app, available to management only. Every report filters by employee and period (today, yesterday, last 7 days, this month) and prints or saves as PDF.")</p>
+        </header>
+
+        <div class="rp-tabs" role="tablist" aria-label="@T("Примери на извештаи", "Report examples")">
+            @for (var i = 0; i < Reports.Length; i++)
+            {
+                var index = i;
+                <button type="button" role="tab" class="rp-tab" aria-selected="@Aria(_report == index)" @onclick="() => _report = index">@T(Reports[index].Title)</button>
+            }
+        </div>
+        @{ var r = Reports[_report]; }
+        <div role="tabpanel">
+            <button type="button" class="rp-shot rp-browser" @onclick="() => Zoom(r.Image, r.Title)">
+                <span class="rp-bar" aria-hidden="true"><i></i><i></i><i></i></span>
+                <img src="img/restorani/@(r.Image)" alt="@T(r.Title)" />
+            </button>
+            <p class="rp-panel-note"><b>@T(r.Headline)</b> @T(r.Text)</p>
+        </div>
+
+        <ul class="rp-report-list" aria-label="@T("Сите извештаи", "All reports")">
+            @foreach (var (name, what) in ReportList)
+            {
+                <li><span>@T(name)</span><span>@T(what)</span></li>
+            }
+        </ul>
+    </div>
+</section>
+
+<section class="section section-tint">
+    <div class="container">
+        <header class="section-head">
+            <p class="eyebrow">@T("Контрола", "Control")</p>
+            <h2>@T("Доверба во тимот, евиденција за сè", "Trust your team, keep a record of everything")</h2>
+        </header>
+        <div class="rp-control">
+            <div class="rp-card rp-card-wide">
+                <div>
+                    <h3>@T("Секој со своја најава и свој јазик", "Everyone with their own login and language")</h3>
+                    <p>@T("Вработените се најавуваат со свое корисничко име и лозинка и го избираат јазикот на интерфејсот. Сесијата трае цела смена, без постојано повторно најавување.",
+                          "Staff sign in with their own username and password and choose the interface language. The session lasts the whole shift, with no constant re-login.")</p>
+                    <div class="rp-langs">
+                        <div><b>Македонски</b><span>@T("основен јазик", "default language")</span></div>
+                        <div><b>English</b><span>@T("за странски вработени", "for foreign staff")</span></div>
+                        <div><b>Shqip</b><span>@T("за албанско говорни вработени", "for Albanian-speaking staff")</span></div>
+                    </div>
+                </div>
+                <button type="button" class="rp-shot" @onclick='() => Zoom("najava.webp", new("Најава", "Sign-in"))'>
+                    <img src="img/restorani/najava.webp" alt="@T("Екран за најава со избор на јазик и темна тема", "Sign-in screen with language and dark-theme options")" loading="lazy" />
+                </button>
+            </div>
+            <div class="rp-card">
+                <span class="card-icon small"><Icon Name="shield" Size="20" /></span>
+                <h3>@T("Извештаите се само за менаџмент", "Reports are for management only")</h3>
+                <p>@T("Апликацијата за извештаи е одвоена и пушта само корисници од менаџментот. Келнерите не гледаат туѓ промет.", "The reports app is separate and admits management users only. Waiters never see anyone else's turnover.")</p>
+            </div>
+            <div class="rp-card">
+                <span class="card-icon small"><Icon Name="badge" Size="20" /></span>
+                <h3>@T("Секоја сметка има сопственик", "Every bill has an owner")</h3>
+                <p>@T("Отворањето, налозите, затворањето, сторното и предавањето се врзани за вработен и време.", "Opening, orders, closing, voids and handovers are tied to an employee and a time.")</p>
+            </div>
+        </div>
+
+        <h3 class="rp-included-title">@T("Што добивате со БСС", "What you get with BSS")</h3>
+        <ul class="rp-included">
+            @foreach (var item in Included)
+            {
+                <li><Icon Name="check" Size="16" /> @T(item)</li>
+            }
+        </ul>
+    </div>
+</section>
+
+<section class="section" id="rp-contact">
+    <div class="container">
+        <div class="rp-cta">
+            <div>
+                <h2>@T("Да ја поминеме вашата вечер заедно", "Let's walk through your evening together")</h2>
+                <p>@T("Ќе ви го покажам БСС со вашите артикли, на вашиот фискален печатач и на вашата мрежа. Јавете се или пишете на Viber, WhatsApp или е-пошта.",
+                      "I'll show you BSS with your own items, on your fiscal printer and on your network. Call, or write on Viber, WhatsApp or email.")</p>
+                <div class="rp-cta-buttons">
+                    <a class="btn btn-light btn-lg" href="@SiteContent.Contact.PhoneHref"><Icon Name="phone" Size="18" /> @SiteContent.Contact.Phone</a>
+                    <a class="btn btn-viber" href="@SiteContent.Contact.ViberHref"><Icon Name="viber" Size="18" /> Viber</a>
+                    <a class="btn btn-whatsapp" href="@SiteContent.Contact.WhatsAppHref" target="_blank" rel="noopener"><Icon Name="whatsapp" Size="18" /> WhatsApp</a>
+                </div>
+            </div>
+            <div class="rp-cta-side">
+                <small>@T("Е-пошта", "Email")</small>
+                <a href="mailto:@SiteContent.Contact.PrimaryEmail">@SiteContent.Contact.PrimaryEmail</a>
+                <small>@T("Локација", "Location")</small>
+                <span>@T(SiteContent.Contact.Area)</span>
+                <small>@T("Сподели ја страната", "Share this page")</small>
+                <ShareButtons Path="restorani" Campaign="restorani" Compact="true"
+                              Message="@(new Loc("БСС — ПОС систем за ресторани:", "BSS — a POS system for restaurants:"))" />
+            </div>
+        </div>
+        <p class="fine">@T("Сликите на оваа страна се од системот, со демо имиња на вработени.", "Screenshots on this page are from the system, with demo employee names.")</p>
+    </div>
+</section>
+
+@if (_zoom is not null)
+{
+    <div class="rp-lightbox" role="dialog" aria-modal="true" aria-label="@T("Зголемена слика", "Enlarged image")"
+         tabindex="-1" @ref="_lightbox" @onclick="CloseZoom" @onkeydown="OnLightboxKey">
+        <button type="button" class="rp-lightbox-close" aria-label="@T("Затвори", "Close")" @onclick="CloseZoom">
+            <Icon Name="close" Size="22" />
+        </button>
+        <figure @onclick:stopPropagation="true">
+            <img src="img/restorani/@(_zoom)" alt="@T(_zoomCaption)" />
+            <figcaption>@T(_zoomCaption)</figcaption>
+        </figure>
+    </div>
+}
+
+@code {
+    [Inject] private IJSRuntime JS { get; set; } = default!;
+
+    private sealed record ShiftStep(string Time, Loc When, Loc Title, Loc Text, string? Image, bool Phone = false);
+    private sealed record Feature(string Icon, Loc Title, Loc Text);
+    private sealed record Report(string Image, Loc Title, Loc Headline, Loc Text);
+
+    private int _report;
+    private string? _zoom;
+    private Loc _zoomCaption;
+    private ElementReference _lightbox;
+    private bool _focusLightbox;
+
+    private static readonly (Loc Label, string Value)[] ReceiptLines =
+    [
+        (new("Мобилен ПОС за келнери", "Mobile POS for waiters"), "✓"),
+        (new("Налози за кујна и шанк", "Kitchen and bar tickets"), "✓"),
+        (new("Фискални печатачи", "Fiscal printers"), "6"),
+        (new("Работа без интернет", "Works without internet"), "✓"),
+        (new("Промет по вработен", "Turnover per employee"), "✓"),
+        (new("Контрола на изменети сметки", "Changed-bill audit"), "✓"),
+        (new("МК · EN · SQ", "MK · EN · SQ"), "✓"),
+    ];
+
+    private static readonly (string Value, Loc Label)[] Stats =
+    [
+        ("6", new("модели фискални печатачи", "fiscal printer models")),
+        ("0", new("потреба од интернет: серверот е во вашиот објект", "need for internet: the server is in your venue")),
+        ("9", new("извештаи за сопственикот, сите со печатење и PDF", "owner reports, all printable and saved as PDF")),
+        ("3", new("јазици за вработените: македонски, англиски, албански", "staff languages: Macedonian, English, Albanian")),
+    ];
+
+    private static readonly ShiftStep[] Shift =
+    [
+        new("17:00", new("Почеток на смена", "Shift starts"), new("Брза најава", "Quick sign-in"),
+            new("Келнерот ја допира својата плочка и ја внесува лозинката. Нема долги кориснички имиња и нема споделени профили, па секоја сметка има свој сопственик.",
+                "The waiter taps their own tile and enters a password. No long usernames and no shared profiles, so every bill has an owner."),
+            "brza-najava.webp"),
+        new("19:40", new("Маса 7 нарачува", "Table 7 orders"), new("Нарачка од телефон", "Ordering from a phone"),
+            new("Артиклите се поделени по категории (пијалоци, пица, месо, салати, десерти) и има пребарување. Количината се менува со + и −, а за кујната се додава белешка. За неколку секунди нарачката е на сметката.",
+                "Items are grouped by category (drinks, pizza, meat, salads, desserts) and searchable. Quantity changes with + and −, with an optional note for the kitchen. Within seconds the order is on the bill."),
+            "mobilen-pos.webp", Phone: true),
+        new("19:41", new("Кујна и шанк", "Kitchen and bar"), new("Налогот стигнува каде што треба", "The ticket goes where it belongs"),
+            new("Секоја ставка се печати на печатачот на својата група: храната оди во кујна, пијалоците на шанк. Келнерот не мора да оди до кујната, а кујната не мора да чита ракопис.",
+                "Each item prints on its group's printer: food to the kitchen, drinks to the bar. The waiter doesn't walk to the kitchen, and the kitchen doesn't read handwriting."),
+            null),
+        new("21:15", new("Гостите плаќаат", "Guests pay"), new("Затворање и фискална сметка", "Closing and the fiscal receipt"),
+            new("Нов налог се додава на постоечката сметка во секое време. Со „Затвори сметка“ сметката се печати, а фискалната сметка се издава на фискалниот печатач. Плаќањето може да биде во готовина, со картичка или комбинирано.",
+                "New orders can be added to an open bill at any time. „Close bill“ prints the bill and issues the fiscal receipt on the fiscal printer. Payment can be cash, card or both."),
+            "desktop-pos.webp"),
+        new("23:30", new("Крај на смена", "Shift ends"), new("„Заврши со работа“", "„Finish work“"),
+            new("Келнерот ја затвора својата смена со едно копче. Ако има отворени сметки, ги предава на колега, па ниту една сметка не останува без сопственик.",
+                "The waiter closes their shift with one button. Any open bills are handed over to a colleague, so no bill is left without an owner."),
+            "kelner-pocetna.webp"),
+        new("23:45", new("Сопственикот проверува", "The owner checks"), new("Бројките, уште истата вечер", "The numbers, the same evening"),
+            new("Вкупен промет, зачувани и незачувани износи, незатворени сметки и вработени со промет на еден екран. Од канцеларијата или од телефон, преку локалната мрежа на објектот.",
+                "Total turnover, saved and unsaved amounts, unclosed bills and employees with sales on one screen. From the office or a phone, over the venue's local network."),
+            "izvestai-pocetna.webp"),
+    ];
+
+    private static readonly Feature[] Features =
+    [
+        new("phone", new("Мобилен и десктоп ПОС", "Mobile and desktop POS"),
+            new("Нова сметка, нов налог, преглед на ставки и затворање, од телефон или од каса.", "New bill, new order, item review and closing, from a phone or the till.")),
+        new("receipt", new("Печатење по групи", "Printing by group"),
+            new("Налози на печатачите за кујна и шанк, сметки на касата, термални и Windows печатачи.", "Tickets to kitchen and bar printers, bills at the till, thermal and Windows printers.")),
+        new("arrow", new("Предавање сметки", "Bill handover"),
+            new("На крајот на смената отворените сметки се предаваат на колега, без губење промет.", "At the end of a shift, open bills pass to a colleague with no lost sales.")),
+        new("badge", new("Права по групи", "Group permissions"),
+            new("Келнери, шанкери и менаџмент. Секој го гледа само она што му е потребно.", "Waiters, bartenders and management. Everyone sees only what they need.")),
+        new("moon", new("Темна тема", "Dark theme"),
+            new("Поудобно за очите во доцните часови и за шанкот со пригушено светло.", "Easier on the eyes late at night and behind a dimly lit bar.")),
+        new("folder", new("Документи и залиха", "Documents and stock"),
+            new("Покрај ПОС, системот води документи, фактури и артикли на залиха.", "Beyond the POS, the system keeps documents, invoices and stock items.")),
+    ];
+
+    private static readonly string[] FiscalPrinters = ["Akcent PF700", "PF500", "SY55", "David", "Severec", "Razvigorec"];
+
+    private static readonly (Loc Title, Loc Note)[] FiscalOps =
+    [
+        (new("Фискална сметка", "Fiscal receipt"), new("Готовина, картичка или комбинирано плаќање", "Cash, card or combined payment")),
+        (new("Сторно сметка", "Void receipt"), new("Со евиденција кој ја сторнирал и кога", "Recording who voided it and when")),
+        (new("Дневно фискално затворање", "Daily fiscal closing"), new("Z-извештај на крајот на денот", "Z report at the end of the day")),
+        (new("Контролен извештај", "Control report"), new("Обичен и проширен, без затворање на денот", "Standard and extended, without closing the day")),
+        (new("Периодичен извештај", "Periodic report"), new("За избран период", "For a chosen period")),
+        (new("Службен влез и излез на пари", "Cash in and cash out"), new("Ситнина на почеток на смена, подигнување готовина", "Float at shift start, cash withdrawals")),
+        (new("Поставување датум и час", "Set date and time"), new("Директно од системот", "Directly from the system")),
+    ];
+
+    private static readonly (Loc Title, Loc Text)[] OfflinePoints =
+    [
+        (new("Податоците остануваат кај вас", "Your data stays with you"),
+            new("Сметките, прометот и вработените се на вашиот сервер, во вашиот објект.", "Bills, turnover and staff live on your server, in your venue.")),
+        (new("Касата работи и при прекин на мрежата", "The till keeps working when the network drops"),
+            new("Сметките се чуваат на уредот и автоматски се испраќаат штом врската се врати.", "Bills are kept on the device and sent automatically once the connection is back.")),
+        (new("Андроид апликација за келнери", "Android app for waiters"),
+            new("Се поврзува на серверот во објектот, нема потреба од мобилен интернет.", "It connects to the server in the venue; no mobile data needed.")),
+    ];
+
+    private static readonly Report[] Reports =
+    [
+        new("smetki-vraboteni.webp", new("Сметки по вработени", "Bills by employee"),
+            new("Секоја сметка, со почеток и крај.", "Every bill, with its start and end."),
+            new("Број на сметка, вработен, време на отворање и затворање, зачуван износ и вкупен промет, со пребарување по број.",
+                "Bill number, employee, opening and closing time, saved amount and total turnover, searchable by number.")),
+        new("zatvoranja.webp", new("Затворања по вработени", "Closings by employee"),
+            new("Секоја смена, раздвоена на фискално и нефискално.", "Every shift, split into fiscal and non-fiscal."),
+            new("Прва најава, крај на смената, статус, број на сметки и износи по вработен и ден.",
+                "First sign-in, end of shift, status, number of bills and amounts per employee and day.")),
+        new("izmeneti-smetki.webp", new("Изменети сметки", "Changed bills"),
+            new("Повторно отворена затворена сметка не поминува незабележано.", "A reopened closed bill never goes unnoticed."),
+            new("Се гледа кој ја отворил, кога, и што е променето: додадени налози, променети количини и датуми, состојбата пред и по отворањето.",
+                "You see who reopened it, when, and what changed: added orders, changed quantities and dates, the state before and after.")),
+        new("izvestai-pocetna.webp", new("Почетна", "Overview"),
+            new("Денешниот ден на еден поглед.", "Today at a glance."),
+            new("Вкупен промет, зачувани и незачувани износи и незатворени сметки, со брз пристап до секој извештај.",
+                "Total turnover, saved and unsaved amounts and unclosed bills, with quick access to every report.")),
+    ];
+
+    private static readonly (Loc Name, Loc What)[] ReportList =
+    [
+        (new("Промет", "Turnover"), new("по вработен, зачувано и незачувано", "per employee, saved and unsaved")),
+        (new("Сметки", "Bills"), new("по вработен, со износи", "per employee, with amounts")),
+        (new("Детален преглед на сметки", "Detailed bill view"), new("артикли по сметка", "items per bill")),
+        (new("Потрошувачка на артикли", "Item consumption"), new("што и колку се продава", "what sells, and how much")),
+        (new("Изменети сметки", "Changed bills"), new("изменети и избришани", "changed and deleted")),
+        (new("Незатворени сметки", "Unclosed bills"), new("без датум на крај", "with no end date")),
+        (new("Работни денови", "Working days"), new("смени по вработен", "shifts per employee")),
+        (new("Затворања по вработени", "Closings by employee"), new("фискално и нефискално", "fiscal and non-fiscal")),
+        (new("Фискални извештаи", "Fiscal reports"), new("фискални сметки и затворања", "fiscal receipts and closings")),
+    ];
+
+    private static readonly Loc[] Included =
+    [
+        new("Мобилен ПОС за келнери (Андроид апликација)", "Mobile POS for waiters (Android app)"),
+        new("Десктоп ПОС за шанк и каса", "Desktop POS for bar and till"),
+        new("Брза најава со плочки за вработените", "Quick sign-in with staff tiles"),
+        new("Налози за кујна и шанк по печатачки групи", "Kitchen and bar tickets by printer group"),
+        new("Интеграција со фискален печатач", "Fiscal printer integration"),
+        new("Сторно, дневно затворање и контролни извештаи", "Voids, daily closing and control reports"),
+        new("Работа на локална мрежа, без интернет", "Runs on the local network, no internet"),
+        new("Касата продолжува со работа при прекин на мрежата", "The till keeps working when the network drops"),
+        new("„Заврши со работа“ и предавање на сметки", "„Finish work“ and bill handover"),
+        new("9 извештаи за менаџмент, со печатење и PDF", "9 management reports, printable and as PDF"),
+        new("Контрола на повторно отворени сметки", "Audit of reopened bills"),
+        new("Интерфејс на македонски, англиски и албански", "Interface in Macedonian, English and Albanian"),
+        new("Документи, фактури и артикли на залиха", "Documents, invoices and stock items"),
+    ];
+
+    private Task Scroll(string id) => JS.InvokeVoidAsync("portfolio.scrollToSection", id).AsTask();
+
+    private void Zoom(string image, Loc caption)
+    {
+        _zoom = image;
+        _zoomCaption = caption;
+        _focusLightbox = true;
+    }
+
+    private void CloseZoom()
+    {
+        _zoom = null;
+        _zoomCaption = default;
+    }
+
+    private void OnLightboxKey(KeyboardEventArgs e)
+    {
+        if (e.Key == "Escape") CloseZoom();
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (_focusLightbox && _zoom is not null)
+        {
+            _focusLightbox = false;
+            try { await _lightbox.FocusAsync(); } catch (InvalidOperationException) { }
+        }
+    }
+}

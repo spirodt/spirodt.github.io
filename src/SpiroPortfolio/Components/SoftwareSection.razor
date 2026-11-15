@@ -8,6 +8,16 @@
             <h2>@T(SiteContent.SoftwareTitle)</h2>
             <p class="lead">@T(SiteContent.SoftwareLead)</p>
         </header>
+        <a class="rp-banner" href="restorani">
+            <div>
+                <span class="tag">@T("Ново", "New")</span>
+                <h3>@T("БСС ПОС за ресторани", "BSS POS for restaurants")</h3>
+                <p>@T("Мобилен ПОС за келнери, налози за кујна и шанк, фискални печатачи, работа без интернет и извештаи по вработен.",
+                      "Mobile POS for waiters, kitchen and bar tickets, fiscal printers, offline operation and per-employee reports.")</p>
+                <span class="rp-banner-link">@T("Погледни ги функциите", "See the features") <Icon Name="arrow" Size="18" /></span>
+            </div>
+            <img src="img/restorani/desktop-pos.webp" alt="@T("Десктоп ПОС со артикли и сметка", "Desktop POS with items and a bill")" loading="lazy" />
+        </a>
         <div class="product-grid">
             @foreach (var p in SiteContent.Products)
             {

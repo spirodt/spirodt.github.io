@@ -1,0 +1,33 @@
+# Проверка на pull request: само изградба (dotnet publish), без објавување на GitHub Pages.
+name: PR build check
+
+on:
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Publish (build only)
+        run: dotnet publish src/SpiroPortfolio/SpiroPortfolio.csproj -c Release -o out
+
+      - name: Static share pages
+        run: python3 .github/scripts/make_static_pages.py out/wwwroot "https://spirodt.github.io/"
+
+      - name: Upload built site (preview)
+        uses: actions/upload-artifact@v4
+        with:
+          name: site-preview
+          path: out/wwwroot
+          retention-days: 3
+
