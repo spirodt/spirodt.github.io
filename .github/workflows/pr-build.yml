@@ -30,3 +30,45 @@ jobs:
           name: site-preview
           path: out/wwwroot
           retention-days: 3
+
+      - name: TEMP render preview screenshots into log
+        run: |
+          pip install -q playwright pillow
+          python -m playwright install --with-deps chromium > /dev/null
+          cat > /tmp/serve.py <<'PY'
+          import http.server, os, functools
+          class H(http.server.SimpleHTTPRequestHandler):
+              def send_head(self):
+                  p = self.translate_path(self.path)
+                  if not os.path.exists(p): self.path = '/index.html'
+                  return super().send_head()
+          http.server.ThreadingHTTPServer(('127.0.0.1', 8080), functools.partial(H, directory='out/wwwroot')).serve_forever()
+          PY
+          python /tmp/serve.py &
+          sleep 2
+          cat > /tmp/shot.py <<'PY'
+          import base64, io
+          from playwright.sync_api import sync_playwright
+          from PIL import Image
+          def dump(name, png, width):
+              im = Image.open(io.BytesIO(png)).convert('RGB')
+              im = im.resize((width, int(im.height * width / im.width)))
+              buf = io.BytesIO(); im.save(buf, 'JPEG', quality=55)
+              b = base64.b64encode(buf.getvalue()).decode()
+              print(f'==BEGIN {name}=='); [print(b[i:i+4000]) for i in range(0, len(b), 4000)]; print(f'==END {name}==')
+          with sync_playwright() as p:
+              br = p.chromium.launch()
+              for name, vw, out in [('desktop', 1440, 900), ('mobile', 390, 390)]:
+                  pg = br.new_page(viewport={'width': vw, 'height': 900})
+                  pg.goto('http://127.0.0.1:8080/restorani?lang=mk'); pg.wait_for_selector('.rp-hero', timeout=60000)
+                  pg.evaluate('window.scrollTo(0, document.body.scrollHeight)'); pg.wait_for_timeout(1500); pg.evaluate('window.scrollTo(0,0)'); pg.wait_for_timeout(500)
+                  dump(name, pg.screenshot(full_page=True), out)
+              pg = br.new_page(viewport={'width': 1440, 'height': 900})
+              pg.goto('http://127.0.0.1:8080/?lang=mk'); pg.wait_for_selector('#software', timeout=60000)
+              pg.locator('#software').scroll_into_view_if_needed(); pg.wait_for_timeout(1200)
+              dump('home-software', pg.locator('#software').screenshot(), 900)
+              pg.goto('http://127.0.0.1:8080/restorani?lang=sq'); pg.wait_for_selector('.rp-hero', timeout=60000); pg.wait_for_timeout(800)
+              dump('sq-hero', pg.screenshot(), 900)
+              br.close()
+          PY
+          python /tmp/shot.py
