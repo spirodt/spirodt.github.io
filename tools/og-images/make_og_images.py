@@ -49,6 +49,12 @@ PAGES = {
         sub="Мобилен ПОС за келнери · Налози за кујна и шанк · Фискални печатачи · Работа без интернет · Извештаи по вработен",
         right="""<div class="one shot"><img src="../img/restorani/desktop-pos.webp" alt=""></div>""",
     ),
+    "og-portfolio": dict(
+        eyebrow="Приказна за успех",
+        title="Wi-Fi мрежа за ресторан долг 145&nbsp;m",
+        sub="На падина, со повеќе објекти и тераси · Четири споредени опции · Стабилна мрежа за мобилната каса",
+        right=f"""<div class="one t-home">{art("network")}</div>""",
+    ),
     "og-refer": dict(
         eyebrow="Препорака",
         title="Препорачај нè — сподели го твојот линк",

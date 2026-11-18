@@ -8,7 +8,7 @@
       utm_source = мрежата (facebook, linkedin…), за да се знае од каде дошол посетителот
       ref        = личниот код на тој што споделува (ако направил свој линк на /refer)
 *@
-<div class="share @(Compact ? "share-compact" : "")">
+<div class="share @(Compact ? "share-compact" : "") @(OnDark ? "share-on-dark" : "")">
     @if (!Compact)
     {
         <p class="share-label">@T(Label ?? new Loc("Сподели", "Share"))</p>
@@ -54,6 +54,8 @@
     [Parameter] public Loc? Label { get; set; }
     [Parameter] public Loc? Message { get; set; }
     [Parameter] public bool Compact { get; set; }
+    /// <summary>За темно поле (пр. „rp-cta“ на /restorani и /portfolio): копчињата со боја на брендот добиваат контраст.</summary>
+    [Parameter] public bool OnDark { get; set; }
     /// <summary>Ако е зададен, се користи наместо зачуваниот личен код (на /refer веднаш по креирање).</summary>
     [Parameter] public string? RefCode { get; set; }
     [Parameter] public string Campaign { get; set; } = "share";

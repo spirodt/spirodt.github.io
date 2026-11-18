@@ -31,7 +31,7 @@ PAGES = {
     "portfolio": {
         "title": "Приказна за успех: Wi-Fi мрежа за ресторан — BSS · Business Software Solutions",
         "description": "Ресторан долг 145 m, на падина, со повеќе објекти и тераси: споредба на четири опции, план со цртежи и стабилна мрежа за мобилната каса. Процена: +389 70 541 763.",
-        "image": "og/og-restorani.png",
+        "image": "og/og-portfolio.png",
         "alt": "Приказна за успех — Wi-Fi мрежа за ресторан со тераси",
     },
     "refer": {
