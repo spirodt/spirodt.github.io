@@ -57,6 +57,7 @@ public static class SiteContent
         // ("pricing", new("Цени", "Pricing")),
         ("about", new("За мене", "About")),
         ("projects", new("Проекти", "Projects")),
+        ("portfolio", new("Портфолио", "Portfolio")),
         ("contact", new("Контакт", "Contact")),
         ("refer", new("Препорачај", "Refer")),
         ("download", new("Преземи BSSR", "Download BSSR")),
