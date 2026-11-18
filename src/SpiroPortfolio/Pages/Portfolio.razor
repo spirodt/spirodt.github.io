@@ -1,0 +1,368 @@
+@page "/portfolio"
+@inherits LocalizedComponent
+@inject IJSRuntime JS
+
+@*
+    Портфолио — приказни за успех.
+    Прва приказна: Wi-Fi мрежа за ресторан со тераси (Вруток).
+    Без цени и без марки/модели на опрема — само проблем, опции, решение и резултат.
+    Името на клиентот е во ClientName: впиши го вистинското само со дозвола од клиентот.
+*@
+
+<section class="pf-hero">
+    <div class="hero-bg" aria-hidden="true"></div>
+    <div class="container">
+        <p class="eyebrow">@T("Приказна за успех · Угостителство", "Success story · Hospitality")</p>
+        <h1>@T("Wi-Fi мрежа за ресторан долг 145 метри", "Wi-Fi for a restaurant 145 metres long")</h1>
+        <p class="lead pf-lead">
+            @T("Ресторан на падина, со повеќе објекти и тераси, доби една стабилна мрежа за мобилната каса на келнерите — од северниот објект до јужните тераси, со сервер на самата локација.",
+               "A restaurant on a slope, with several buildings and terraces, got one stable network for the waiters' mobile POS — from the north building to the south terraces, with the server on site.")
+        </p>
+        <p class="pf-client"><Icon Name="building" Size="16" /> @T(ClientName)</p>
+        <div class="pf-ctas">
+            <a class="btn btn-primary btn-lg" href="@SiteContent.Contact.PhoneHref">
+                <Icon Name="phone" Size="18" /> @T("Побарајте процена", "Ask for an assessment")
+            </a>
+            <a class="btn btn-ghost btn-lg" href="portfolio#pf-options" @onclick='() => Scroll("pf-options")' @onclick:preventDefault>
+                @T("Погледнете ги опциите", "See the options")
+            </a>
+        </div>
+    </div>
+</section>
+
+<div class="rp-stats">
+    <div class="container rp-stats-grid">
+        @foreach (var (value, label) in Stats)
+        {
+            <div class="rp-stat"><strong>@value</strong><span>@T(label)</span></div>
+        }
+    </div>
+</div>
+
+<section class="section">
+    <div class="container">
+        <header class="section-head">
+            <p class="eyebrow">@T("Предизвикот", "The challenge")</p>
+            <h2>@T("Долга локација, повеќе објекти, без простор за прекини", "A long site, several buildings, no room for dropouts")</h2>
+        </header>
+        <div class="pf-challenge">
+            @foreach (var (icon, title, text) in Challenge)
+            {
+                <article class="pf-card">
+                    <span class="pf-card-icon"><Icon Name="@icon" Size="22" /></span>
+                    <h3>@T(title)</h3>
+                    <p>@T(text)</p>
+                </article>
+            }
+        </div>
+    </div>
+</section>
+
+<section class="section section-tint" id="pf-solution">
+    <div class="container">
+        <header class="section-head">
+            <p class="eyebrow">@T("Решението", "The solution")</p>
+            <h2>@T("Главна точка во средината, кабел до двата краја", "A main point in the middle, cable to both ends")</h2>
+            <p class="lead">
+                @T("Мрежата тргнува од централниот објект. Два кабелски правци носат податоци и напојување до северниот и јужниот дел, а останатите точки се поврзуваат безжично — секоја на само еден скок од кабел.",
+                   "The network starts in the central building. Two cable runs carry data and power to the north and south parts, and the remaining points connect wirelessly — each just one hop from a cable.")
+            </p>
+        </header>
+
+        <div class="pf-drawings">
+            <figure class="pf-figure">
+                <div class="pf-svg-wrap">
+                    <svg class="pf-map" viewBox="60 0 640 960" role="img" aria-label="@T("Распоред на мрежните точки на локацијата", "Network points on the site")">
+                        <g transform="translate(110,70)">
+                            <path d="M0 -30 L10 6 L0 0 L-10 6 Z" class="pf-ink-fill" />
+                            <g><text x="0" y="26" text-anchor="middle" font-size="16" font-weight="700" class="pf-ink-fill">@T("С", "N")</text></g>
+                        </g>
+                        <g transform="translate(420,60) rotate(16.9)">
+                            <rect x="92" y="250" width="22" height="600" rx="11" class="pf-road" />
+                            <rect x="-78" y="-18" width="156" height="860" rx="62" class="pf-boundary" />
+                            <rect x="-58" y="10" width="62" height="70" rx="3" class="pf-bldg" />
+                            <rect x="-62" y="100" width="70" height="80" rx="3" class="pf-bldg" />
+                            <rect x="-66" y="196" width="74" height="70" rx="3" class="pf-bldg" />
+                            <rect x="-70" y="282" width="80" height="78" rx="3" class="pf-bldg-main" />
+                            <rect x="-62" y="376" width="70" height="56" rx="3" class="pf-bldg" />
+                            <rect x="-56" y="446" width="60" height="44" rx="3" class="pf-bldg" />
+                            <rect x="-30" y="505" width="58" height="300" rx="4" class="pf-terrace" />
+                            <rect x="-48" y="505" width="8" height="310" rx="4" class="pf-water" />
+                            <rect x="34" y="520" width="7" height="290" rx="3.5" class="pf-water" />
+                            <g class="pf-tree">
+                                <circle cx="56" cy="560" r="12" /><circle cx="58" cy="625" r="14" /><circle cx="54" cy="700" r="12" /><circle cx="57" cy="770" r="13" />
+                                <circle cx="-62" cy="610" r="10" /><circle cx="-60" cy="740" r="11" /><circle cx="55" cy="40" r="11" />
+                            </g>
+                            <line x1="0" y1="0" x2="0" y2="825" class="pf-axis" />
+
+                            <path d="M -28 313 H 20 V 170.7 H 0" class="pf-cable" />
+                            <path d="M -28 313 H 20 V 540.6 H 0" class="pf-cable" />
+                            <path d="M 0 170.7 Q -34 114 0 56.9" class="pf-wifi" />
+                            <path d="M -28 313 Q -40 370 0 426.8" class="pf-wifi" />
+                            <path d="M 0 540.6 Q -34 612 0 682.8" class="pf-wifi" />
+
+                            @foreach (var y in new[] { 56.9, 170.7, 426.8, 540.6, 682.8 })
+                            {
+                                <g><circle cx="0" cy="@y" r="13" class="pf-node" /></g>
+                            }
+                            <circle cx="-28" cy="313" r="16" class="pf-node-main" />
+
+                            @foreach (var (id, x, y) in MapIds)
+                            {
+                                <g transform="translate(@x,@(y + 4)) rotate(-16.9)">
+                                    <text text-anchor="middle" font-size="11" font-weight="700" class="@(id == "1" ? "pf-on-main" : "pf-ink-fill")">@id</text>
+                                </g>
+                            }
+
+                            @foreach (var c in MapCallouts)
+                            {
+                                <g>
+                                    <line x1="@c.LineFrom" y1="@c.Y" x2="132" y2="@c.Y" class="pf-leader" />
+                                    <g transform="translate(138,@(c.Y - 5)) rotate(-16.9)">
+                                        <text font-size="13" font-weight="700" class="pf-ink-fill">@c.Title</text>
+                                        <text y="17" font-size="12" class="@c.SubClass">@T(c.Sub)</text>
+                                    </g>
+                                </g>
+                            }
+                            <g transform="translate(-24,780) rotate(-16.9)"><text font-size="11" class="pf-muted-fill">@T("тераси", "terraces")</text></g>
+                            <g transform="translate(97,830) rotate(-16.9)"><text font-size="11" class="pf-muted-fill">@T("пат", "road")</text></g>
+                        </g>
+                    </svg>
+                </div>
+                <figcaption>@T("Распоред на мрежните точки на локацијата", "Network points on the site")</figcaption>
+            </figure>
+
+            <figure class="pf-figure">
+                <div class="pf-svg-wrap">
+                    <svg class="pf-wiring" viewBox="0 0 640 476" role="img" aria-label="@T("Шема на поврзување", "Wiring diagram")">
+                        @foreach (var b in WiringBoxes)
+                        {
+                            <g>
+                                <rect x="@b.X" y="@b.Y" width="@b.W" height="48" rx="8" class="@(b.Accent ? "pf-box-accent" : "pf-box")" />
+                                <text x="@(b.X + b.W / 2)" y="@(b.Y + 20)" text-anchor="middle" font-size="14" font-weight="700" class="@(b.Accent ? "pf-on-main" : "pf-ink-fill")">@T(b.Title)</text>
+                                <text x="@(b.X + b.W / 2)" y="@(b.Y + 37)" text-anchor="middle" font-size="11" class="@(b.Accent ? "pf-on-main-soft" : "pf-muted-fill")">@T(b.Sub)</text>
+                            </g>
+                        }
+                        <line x1="320" y1="64" x2="320" y2="96" class="pf-line" />
+                        <line x1="320" y1="144" x2="320" y2="176" class="pf-line" />
+                        <path d="M 410 120 H 470" class="pf-line" />
+
+                        <line x1="320" y1="224" x2="320" y2="276" class="pf-line" />
+                        <path d="M 230 200 H 180 V 400" class="pf-cable" />
+                        <path d="M 410 200 H 460 V 400" class="pf-cable" />
+                        <path d="M 320 324 V 400" class="pf-wifi" />
+                        <path d="M 180 400 H 60" class="pf-wifi" />
+                        <path d="M 460 400 H 580" class="pf-wifi" />
+
+                        <circle cx="320" cy="300" r="24" class="pf-node-main" />
+                        <text x="320" y="305" text-anchor="middle" font-size="14" font-weight="700" class="pf-on-main">1</text>
+                        <text x="354" y="296" font-size="13" font-weight="700" class="pf-ink-fill">@T("Главна точка", "Main point")</text>
+                        <text x="354" y="312" font-size="11" class="pf-muted-fill">~90 m</text>
+
+                        @foreach (var n in WiringNodes)
+                        {
+                            <g>
+                                <circle cx="@n.X" cy="@n.Y" r="20" class="pf-node" />
+                                <text x="@n.X" y="@(n.Y + 5)" text-anchor="middle" font-size="13" font-weight="700" class="pf-ink-fill">@n.Id</text>
+                                <text x="@n.X" y="@(n.Y + 38)" text-anchor="middle" font-size="12" font-weight="700" class="pf-ink-fill">@T(n.Name)</text>
+                                <text x="@n.X" y="@(n.Y + 53)" text-anchor="middle" font-size="11" class="pf-muted-fill">@n.Dist · @T(n.Link)</text>
+                            </g>
+                        }
+                    </svg>
+                </div>
+                <figcaption>@T("Шема на поврзување", "Wiring diagram")</figcaption>
+            </figure>
+        </div>
+
+        <ul class="pf-legend">
+            <li><i class="pf-lg-cable"></i>@T("Кабел (податоци + напојување)", "Cable (data + power)")</li>
+            <li><i class="pf-lg-wifi"></i>@T("Безжична врска", "Wireless link")</li>
+            <li><i class="pf-lg-main"></i>@T("Главна точка", "Main point")</li>
+            <li><i class="pf-lg-node"></i>@T("Мрежна точка", "Network point")</li>
+        </ul>
+    </div>
+</section>
+
+<section class="section" id="pf-options">
+    <div class="container">
+        <header class="section-head">
+            <p class="eyebrow">@T("Опции", "Options")</p>
+            <h2>@T("Четири варијанти, една одлука", "Four options, one decision")</h2>
+            <p class="lead">
+                @T("Пред купувањето, сопственикот доби споредба на четири варијанти — по сигурност, контрола и едноставност — и избра со јасна слика.",
+                   "Before buying anything, the owner got a comparison of four options — by reliability, control and simplicity — and chose with a clear picture.")
+            </p>
+        </header>
+        <div class="pf-options">
+            @for (var i = 0; i < Options.Length; i++)
+            {
+                var o = Options[i];
+                <article class="pf-option @(o.Chosen ? "is-chosen" : "")">
+                    <div class="pf-option-head">
+                        <span class="pf-option-no">@T("Опција", "Option") @(i + 1)</span>
+                        @if (o.Chosen)
+                        {
+                            <span class="pf-badge"><Icon Name="check" Size="14" /> @T("Избрано", "Chosen")</span>
+                        }
+                    </div>
+                    <h3>@T(o.Title)</h3>
+                    <p>@T(o.Text)</p>
+                    <dl class="pf-ratings">
+                        @foreach (var (label, score) in new[] { (Reliability, o.Reliability), (Control, o.Control), (Simplicity, o.Simplicity) })
+                        {
+                            <div>
+                                <dt>@T(label)</dt>
+                                <dd aria-label="@score @T("од 3", "of 3")">
+                                    @for (var d = 1; d <= 3; d++)
+                                    {
+                                        <i class="@(d <= score ? "on" : "")"></i>
+                                    }
+                                </dd>
+                            </div>
+                        }
+                    </dl>
+                </article>
+            }
+        </div>
+    </div>
+</section>
+
+<section class="section section-tint">
+    <div class="container">
+        <header class="section-head">
+            <p class="eyebrow">@T("Резултат", "The result")</p>
+            <h2>@T("Една мрежа, од првата до последната маса", "One network, from the first table to the last")</h2>
+        </header>
+        <ul class="pf-results">
+            @foreach (var r in Results)
+            {
+                <li><span class="pf-check"><Icon Name="check" Size="18" /></span><span>@T(r)</span></li>
+            }
+        </ul>
+    </div>
+</section>
+
+<section class="section">
+    <div class="container">
+        <div class="rp-cta">
+            <div>
+                <h2>@T("Имате голем или тежок простор за покривање?", "Got a large or difficult space to cover?")</h2>
+                <p>@T("Доаѓам на лице место, ја снимам локацијата и ви давам опции со јасна споредба пред да купите било што.",
+                      "I come on site, survey the space and give you options with a clear comparison before you buy anything.")</p>
+                <div class="rp-cta-buttons">
+                    <a class="btn btn-light btn-lg" href="@SiteContent.Contact.PhoneHref"><Icon Name="phone" Size="18" /> @SiteContent.Contact.Phone</a>
+                    <a class="btn btn-viber" href="@SiteContent.Contact.ViberHref"><Icon Name="viber" Size="18" /> Viber</a>
+                    <a class="btn btn-whatsapp" href="@SiteContent.Contact.WhatsAppHref" target="_blank" rel="noopener"><Icon Name="whatsapp" Size="18" /> WhatsApp</a>
+                </div>
+            </div>
+            <div class="rp-cta-side">
+                <small>@T("Е-пошта", "Email")</small>
+                <a href="mailto:@SiteContent.Contact.PrimaryEmail">@SiteContent.Contact.PrimaryEmail</a>
+                <small>@T("Локација", "Location")</small>
+                <span>@T(SiteContent.Contact.Area)</span>
+            </div>
+        </div>
+    </div>
+</section>
+
+@code {
+    // Со дозвола од клиентот, тука може да стои вистинското име на ресторанот.
+    private static readonly Loc ClientName = new("Клиент: ресторан со тераси, Вруток", "Client: restaurant with terraces, Vrutok");
+
+    private static readonly (string Value, Loc Label)[] Stats =
+    [
+        ("145 m", new("долга локација на падина", "long site on a slope")),
+        ("6", new("мрежни точки", "network access points")),
+        ("≤ 1", new("безжичен скок до секоја точка", "wireless hop to any point")),
+        ("4", new("споредени опции", "options compared")),
+    ];
+
+    private static readonly (string Icon, Loc Title, Loc Text)[] Challenge =
+    [
+        ("pin", new("Терен", "Terrain"),
+            new("145 m по должина, на падина, со одделни објекти, тераси, дрвја и водени канали меѓу нив.",
+                "145 m long, on a slope, with separate buildings, terraces, trees and water channels in between.")),
+        ("receipt", new("Каса во живо", "Live POS"),
+            new("Келнерите нарачуваат од телефон; секоја нарачка мора веднаш да стигне до серверот, кујната и шанкот.",
+                "Waiters order from their phones; every order must reach the server, kitchen and bar instantly.")),
+        ("wrench", new("Без големи градежни зафати", "No major building work"),
+            new("Решението требаше да се постави брзо, со минимално кабелирање и во разумен буџет.",
+                "The solution had to go in quickly, with minimal cabling and within a sensible budget.")),
+    ];
+
+    // Карта: бројки на точките и описи покрај нив (координати во ротираниот систем на локацијата).
+    private static readonly (string Id, double X, double Y)[] MapIds =
+    [
+        ("3", 0, 56.9), ("2", 0, 170.7), ("1", -28, 313), ("4", 0, 426.8), ("5", 0, 540.6), ("6", 0, 682.8),
+    ];
+
+    private record Callout(double Y, double LineFrom, string Title, Loc Sub, string SubClass);
+
+    private static readonly Loc Wireless = new("безжично", "wireless");
+
+    private static readonly Callout[] MapCallouts =
+    [
+        new(56.9, 14, "N3 · ~135 m", Wireless, "pf-wifi-fill"),
+        new(170.7, 22, "N2 · ~115 m", new("кабел ~25 m", "cable ~25 m"), "pf-cable-fill"),
+        new(313, 122, "N1 · ~90 m", new("главна · сервер · рутер", "main · server · router"), "pf-muted-fill"),
+        new(426.8, 14, "N4 · ~70 m", Wireless, "pf-wifi-fill"),
+        new(540.6, 22, "N5 · ~50 m", new("кабел ~40 m", "cable ~40 m"), "pf-cable-fill"),
+        new(682.8, 14, "N6 · ~25 m", Wireless, "pf-wifi-fill"),
+    ];
+
+    private record Box(double X, double Y, double W, Loc Title, Loc Sub, bool Accent);
+
+    private static readonly Box[] WiringBoxes =
+    [
+        new(230, 16, 180, new("Интернет", "Internet"), new("уред на провајдерот", "provider device"), false),
+        new(230, 96, 180, new("Рутер", "Router"), new("мрежа · VPN · заштита", "network · VPN · protection"), true),
+        new(470, 96, 150, new("Сервер", "Server"), new("каса · извештаи", "POS · reports"), false),
+        new(230, 176, 180, new("Свич со PoE", "PoE switch"), new("податоци + напојување", "data + power"), false),
+    ];
+
+    private record WNode(double X, double Y, string Id, Loc Name, string Dist, Loc Link);
+
+    private static readonly Loc Cable = new("кабел", "cable");
+    private static readonly Loc OneHop = new("1 скок", "1 hop");
+
+    private static readonly WNode[] WiringNodes =
+    [
+        new(60, 400, "3", new("Северен крај", "North end"), "~135 m", OneHop),
+        new(180, 400, "2", new("Север", "North"), "~115 m", Cable),
+        new(320, 400, "4", new("Долен објект", "Lower building"), "~70 m", OneHop),
+        new(460, 400, "5", new("Горни тераси", "Upper terraces"), "~50 m", Cable),
+        new(580, 400, "6", new("Јужни тераси", "South terraces"), "~25 m", OneHop),
+    ];
+
+    private static readonly Loc Reliability = new("Сигурност", "Reliability");
+    private static readonly Loc Control = new("Контрола", "Control");
+    private static readonly Loc Simplicity = new("Едноставност", "Simplicity");
+
+    private record Option(Loc Title, Loc Text, int Reliability, int Control, int Simplicity, bool Chosen);
+
+    private static readonly Option[] Options =
+    [
+        new(new("Рутер од провајдерот + појака безжична мрежа", "Provider router + stronger mesh"),
+            new("Најбрзо поставување; основна контрола преку уредот на провајдерот.", "Fastest to set up; basic control through the provider's device."),
+            3, 1, 3, false),
+        new(new("Сопствен рутер + појака безжична мрежа", "Own router + stronger mesh"),
+            new("Највисока сигурност; серверот и интернетот работат и додека се ажурира Wi-Fi.", "Highest reliability; server and internet stay up while the Wi-Fi updates."),
+            3, 3, 2, false),
+        new(new("Рутер од провајдерот + полесна безжична мрежа", "Provider router + lighter mesh"),
+            new("Најмал зафат; погусто поставени точки поради помал домет.", "Smallest footprint; points placed closer together for the shorter range."),
+            2, 1, 3, false),
+        new(new("Сопствен рутер + полесна мрежа + напојување преку кабел", "Own router + lighter mesh + power over cable"),
+            new("Целосна контрола, VPN за далечински пристап, а кабелските точки не бараат штекер.", "Full control, VPN for remote access, and the cabled points need no power socket."),
+            3, 3, 2, true),
+    ];
+
+    private static readonly Loc[] Results =
+    [
+        new("Покриеност на целата локација — објекти и тераси.", "Coverage across the whole site — buildings and terraces."),
+        new("Серверот и касата се на кабел; ажурирање на Wi-Fi не ја прекинува работата.", "Server and till are cabled; a Wi-Fi update doesn't stop the business."),
+        new("Безбеден далечински пристап за поддршка и извештаи, без отворени порти кон базата.", "Secure remote access for support and reports, with no open ports to the database."),
+        new("Документација со шеми, листа за проверка и чекори — лесно за одржување и проширување.", "Documentation with diagrams, a checklist and steps — easy to maintain and extend."),
+    ];
+
+    private Task Scroll(string id) => JS.InvokeVoidAsync("portfolio.scrollToSection", id).AsTask();
+}

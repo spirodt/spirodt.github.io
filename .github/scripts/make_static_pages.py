@@ -2,7 +2,7 @@
 Facebook, LinkedIn, Viber и WhatsApp НЕ извршуваат JavaScript — ги читаат само <meta> ознаките од HTML-от.
 Blazor страната има еден index.html, па овој скрипт по `dotnet publish` прави:
 
-  download.html, refer.html, restorani.html — копија од index.html со сопствен наслов, опис и слика за преглед
+  download.html, refer.html, restorani.html, portfolio.html — копија од index.html со сопствен наслов, опис и слика за преглед
                                (GitHub Pages ја служи /download од download.html, без пренасочување)
   и ги заменува апсолутните адреси со вистинската адреса на страната (ако е сопствен домен).
 
@@ -27,6 +27,12 @@ PAGES = {
         "description": "ПОС систем за ресторани и кафе-барови: мобилен ПОС за келнери, налози за кујна и шанк, фискални печатачи, работа без интернет и извештаи по вработен. Демо: +389 70 541 763.",
         "image": "og/og-restorani.png",
         "alt": "БСС ПОС за ресторани — мобилен и десктоп ПОС",
+    },
+    "portfolio": {
+        "title": "Приказна за успех: Wi-Fi мрежа за ресторан — BSS · Business Software Solutions",
+        "description": "Ресторан долг 145 m, на падина, со повеќе објекти и тераси: споредба на четири опции, план со цртежи и стабилна мрежа за мобилната каса. Процена: +389 70 541 763.",
+        "image": "og/og-restorani.png",
+        "alt": "Приказна за успех — Wi-Fi мрежа за ресторан со тераси",
     },
     "refer": {
         "title": "Препорачај нè — BSS · Business Software Solutions",

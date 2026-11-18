@@ -771,3 +771,98 @@ body.scrolled .nav { box-shadow: 0 6px 24px -16px rgba(15, 23, 42, .25); }
 .rp-banner p { margin: 0; color: var(--ink-2); }
 .rp-banner-link { display: inline-flex; align-items: center; gap: .4rem; margin-top: 1rem; font-weight: 800; color: var(--primary-text); }
 .rp-banner img { width: 100%; height: auto; border-radius: var(--radius-sm); border: 1px solid var(--line); }
+
+/* ═══ Портфолио — приказни за успех (/portfolio) ═══════════════════════════════════════ */
+.pf-hero { position: relative; overflow: hidden; padding: clamp(3rem, 7vw, 5.5rem) 0 clamp(2.5rem, 5vw, 4rem); }
+.pf-hero .container { position: relative; }
+.pf-hero h1 { font-size: clamp(2.1rem, 5vw, 3.6rem); line-height: 1.08; letter-spacing: -0.02em; margin: 0 0 .5em; max-width: 18ch; text-wrap: balance; }
+.pf-lead { max-width: 60ch; }
+.pf-client { display: inline-flex; align-items: center; gap: .5rem; margin: .4rem 0 0; padding: .4rem .8rem; border-radius: 999px; background: var(--amber-soft); color: var(--amber-ink); font-weight: 700; font-size: .9rem; }
+.pf-ctas { display: flex; flex-wrap: wrap; gap: .75rem; margin-top: 1.8rem; }
+
+.pf-challenge { display: grid; gap: 1.2rem; }
+@media (min-width: 860px) { .pf-challenge { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+.pf-card { padding: 1.5rem; border-radius: var(--radius); background: var(--surface); border: 1px solid var(--line); }
+.pf-card h3 { margin: .9rem 0 .4rem; font-size: 1.15rem; }
+.pf-card p { margin: 0; color: var(--ink-2); }
+.pf-card-icon { display: inline-grid; place-items: center; width: 44px; height: 44px; border-radius: 12px; background: var(--primary-soft); color: var(--primary-text); }
+
+/* Цртежи */
+.pf-drawings { display: grid; gap: 1.2rem; }
+@media (min-width: 980px) { .pf-drawings { grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr); align-items: start; } }
+.pf-figure { margin: 0; padding: 1rem; border-radius: var(--radius); background: var(--surface); border: 1px solid var(--line); box-shadow: var(--shadow-sm); min-width: 0; }
+.pf-figure figcaption { margin-top: .6rem; font-size: .88rem; color: var(--muted); text-align: center; }
+.pf-svg-wrap { overflow-x: auto; }
+.pf-svg-wrap svg { display: block; width: 100%; height: auto; }
+.pf-map { min-width: 300px; max-height: 620px; }
+.pf-wiring { min-width: 460px; }
+
+.pf-ink-fill { fill: var(--ink); }
+.pf-muted-fill { fill: var(--muted); }
+.pf-on-main { fill: #fff; }
+.pf-on-main-soft { fill: rgba(255, 255, 255, .8); }
+.pf-cable-fill { fill: var(--amber-ink); }
+.pf-wifi-fill { fill: var(--primary-text); }
+.pf-road { fill: var(--line); }
+.pf-boundary { fill: none; stroke: var(--ok); stroke-width: 2.5; }
+.pf-bldg { fill: var(--line-strong); }
+.pf-bldg-main { fill: var(--navy-2); }
+.pf-terrace { fill: var(--tint); stroke: var(--line); }
+.pf-water { fill: #7fb3d1; opacity: .8; }
+.pf-tree { fill: #9cc79f; }
+:root[data-theme="dark"] .pf-tree { fill: #355e3e; }
+:root[data-theme="dark"] .pf-water { fill: #3f7898; }
+.pf-axis { stroke: var(--muted); stroke-width: 1.2; stroke-dasharray: 2 4; }
+.pf-leader { stroke: var(--line-strong); stroke-width: 1; }
+.pf-line { stroke: var(--ink-2); stroke-width: 2; fill: none; }
+.pf-cable { fill: none; stroke: var(--amber); stroke-width: 5; stroke-linejoin: round; stroke-linecap: round; }
+.pf-wifi { fill: none; stroke: var(--primary); stroke-width: 3; stroke-dasharray: 7 6; }
+.pf-node { fill: var(--surface); stroke: var(--ink); stroke-width: 3; }
+.pf-node-main { fill: var(--amber); stroke: var(--amber); stroke-width: 3; }
+.pf-box { fill: var(--surface); stroke: var(--line-strong); stroke-width: 1.5; }
+.pf-box-accent { fill: var(--navy); stroke: var(--navy); }
+:root[data-theme="dark"] .pf-box-accent { fill: var(--primary); stroke: var(--primary); }
+
+.pf-legend { display: flex; flex-wrap: wrap; gap: .6rem 1.4rem; margin-top: 1.1rem; font-size: .9rem; color: var(--ink-2); }
+.pf-legend li { display: inline-flex; align-items: center; gap: .5rem; }
+.pf-legend i { display: inline-block; flex: none; }
+.pf-lg-cable { width: 26px; height: 5px; border-radius: 3px; background: var(--amber); }
+.pf-lg-wifi { width: 26px; border-top: 3px dashed var(--primary); }
+.pf-lg-main { width: 14px; height: 14px; border-radius: 50%; background: var(--amber); }
+.pf-lg-node { width: 14px; height: 14px; border-radius: 50%; border: 3px solid var(--ink); background: var(--surface); }
+
+/* Опции */
+.pf-options { display: grid; gap: 1.2rem; }
+@media (min-width: 720px) { .pf-options { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (min-width: 1100px) { .pf-options { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+.pf-option { display: flex; flex-direction: column; padding: 1.4rem; border-radius: var(--radius); background: var(--surface); border: 1px solid var(--line); }
+.pf-option.is-chosen { border-color: var(--primary); box-shadow: inset 0 0 0 1px var(--primary), var(--shadow); }
+.pf-option-head { display: flex; justify-content: space-between; align-items: center; gap: .5rem; min-height: 26px; }
+.pf-option-no { font-size: .78rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
+.pf-badge { display: inline-flex; align-items: center; gap: .3rem; padding: .2rem .6rem; border-radius: 999px; background: var(--primary); color: #fff; font-size: .78rem; font-weight: 700; }
+.pf-option h3 { margin: .8rem 0 .5rem; font-size: 1.08rem; line-height: 1.3; text-wrap: balance; }
+.pf-option p { margin: 0 0 1.2rem; color: var(--ink-2); font-size: .95rem; }
+.pf-ratings { display: grid; gap: .45rem; margin: auto 0 0; padding-top: 1rem; border-top: 1px dashed var(--line-strong); }
+.pf-ratings div { display: flex; justify-content: space-between; align-items: center; gap: .6rem; }
+.pf-ratings dt { font-size: .88rem; color: var(--muted); }
+.pf-ratings dd { display: flex; gap: 4px; margin: 0; }
+.pf-ratings i { width: 18px; height: 6px; border-radius: 3px; background: var(--line); }
+.pf-ratings i.on { background: var(--primary); }
+
+/* Резултат */
+.pf-results { display: grid; gap: 1rem; }
+@media (min-width: 860px) { .pf-results { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.pf-results li { display: flex; gap: .9rem; align-items: flex-start; padding: 1.2rem; border-radius: var(--radius); background: var(--surface); border: 1px solid var(--line); color: var(--ink-2); font-weight: 600; }
+.pf-check { display: inline-grid; place-items: center; flex: none; width: 32px; height: 32px; border-radius: 50%; background: var(--ok-soft); color: var(--ok); }
+
+/* Банер во „Проекти“ на почетна */
+.pf-teaser { display: grid; gap: 1.2rem; align-items: center; margin-top: 1.6rem; padding: 1.6rem; border-radius: var(--radius); background: var(--surface); border: 1px solid var(--line); box-shadow: var(--shadow-sm); color: inherit; }
+.pf-teaser:hover { text-decoration: none; box-shadow: var(--shadow); }
+@media (min-width: 860px) { .pf-teaser { grid-template-columns: 1fr auto; padding: 2rem; } }
+.pf-teaser h3 { margin: .2rem 0 .5rem; font-size: 1.4rem; }
+.pf-teaser p { margin: 0; color: var(--ink-2); max-width: 70ch; }
+.pf-teaser-stats { display: flex; gap: 1.6rem; }
+.pf-teaser-stats div { display: grid; gap: .2rem; }
+.pf-teaser-stats strong { font-size: 1.8rem; line-height: 1; font-weight: 800; color: var(--primary-text); }
+.pf-teaser-stats span { font-size: .82rem; color: var(--muted); }
+.pf-teaser-link { display: inline-flex; align-items: center; gap: .4rem; margin-top: 1rem; font-weight: 800; color: var(--primary-text); }
